@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Gentle Care Tracker - History Log</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Spline+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#2beeba", // Minty fresh
+                        "primary-dark": "#1bc495",
+                        "secondary": "#B8B8D1", // Lavender
+                        "rose": "#E89D9D", // Soft Rose
+                        "cream": "#FFFCF9", // Warm Cream
+                        "background-light": "#f8fcfb", // Slightly cooler cream from component list
+                        "background-dark": "#10221d",
+                        "text-main": "#0d1b18",
+                        "text-muted": "#4A5D58",
+                    },
+                    fontFamily: {
+                        "display": ["Spline Sans", "sans-serif"],
+                        "body": ["Spline Sans", "sans-serif"],
+                    },
+                    borderRadius: {
+                        "DEFAULT": "1rem", 
+                        "lg": "1.5rem", 
+                        "xl": "2rem", 
+                        "2xl": "2.5rem",
+                        "full": "9999px"
+                    },
+                    boxShadow: {
+                        "soft": "0 8px 24px -6px rgba(43, 238, 186, 0.15)",
+                        "card": "0 4px 20px -2px rgba(0, 0, 0, 0.03)",
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        /* Custom scrollbar hiding for horizontal scroll areas */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-text-main antialiased selection:bg-primary selection:text-white">
+<div class="relative flex h-full min-h-screen w-full flex-col mx-auto max-w-md bg-background-light dark:bg-background-dark shadow-2xl overflow-hidden">
+<!-- Sticky Header Section -->
+<header class="sticky top-0 z-30 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-md pt-4 pb-2 transition-all duration-300">
+<!-- Top Nav -->
+<div class="flex items-center justify-between px-6 pb-4">
+<button class="group flex h-10 w-10 items-center justify-center rounded-full bg-white dark:bg-white/5 border border-slate-100 dark:border-white/10 shadow-sm transition-transform active:scale-95">
+<span class="material-symbols-outlined text-slate-600 dark:text-slate-300">arrow_back</span>
+</button>
+<h1 class="text-xl font-bold tracking-tight text-slate-900 dark:text-white">History Log</h1>
+<button class="group flex h-10 w-10 items-center justify-center rounded-full bg-white dark:bg-white/5 border border-slate-100 dark:border-white/10 shadow-sm transition-transform active:scale-95">
+<span class="material-symbols-outlined text-slate-600 dark:text-slate-300">filter_list</span>
+</button>
+</div>
+<!-- Profile Filter Scroll -->
+<div class="no-scrollbar flex gap-3 overflow-x-auto px-6 pb-2 pt-1">
+<!-- Active Filter -->
+<button class="flex h-10 shrink-0 items-center justify-center gap-x-2 rounded-full bg-primary px-5 shadow-soft transition-transform active:scale-95">
+<span class="text-slate-900 text-sm font-bold">All</span>
+</button>
+<!-- Inactive Filters -->
+<button class="flex h-10 shrink-0 items-center justify-center gap-x-2 rounded-full bg-white dark:bg-white/5 border border-slate-100 dark:border-white/10 px-5 transition-transform active:scale-95 hover:bg-slate-50 dark:hover:bg-white/10">
+<span class="text-slate-600 dark:text-slate-300 text-sm font-medium">Leo</span>
+</button>
+<button class="flex h-10 shrink-0 items-center justify-center gap-x-2 rounded-full bg-white dark:bg-white/5 border border-slate-100 dark:border-white/10 px-5 transition-transform active:scale-95 hover:bg-slate-50 dark:hover:bg-white/10">
+<span class="text-slate-600 dark:text-slate-300 text-sm font-medium">Dad</span>
+</button>
+<button class="flex h-10 shrink-0 items-center justify-center gap-x-2 rounded-full bg-white dark:bg-white/5 border border-slate-100 dark:border-white/10 px-5 transition-transform active:scale-95 hover:bg-slate-50 dark:hover:bg-white/10">
+<span class="text-slate-600 dark:text-slate-300 text-sm font-medium">Mom</span>
+</button>
+</div>
+<!-- Subtle gradient divider -->
+<div class="h-6 w-full bg-gradient-to-b from-background-light dark:from-background-dark to-transparent absolute bottom-[-24px] pointer-events-none"></div>
+</header>
+<!-- Scrollable List Content -->
+<main class="flex-1 overflow-y-auto px-6 pb-28 pt-2">
+<!-- Group: Today -->
+<div class="mb-6">
+<h3 class="mb-3 text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 pl-2">Today</h3>
+<div class="flex flex-col gap-3">
+<!-- Card 1: Medicine -->
+<div class="group relative flex items-center justify-between gap-4 rounded-2xl bg-white dark:bg-slate-800 p-4 shadow-card hover:shadow-md transition-all duration-300 border border-transparent hover:border-primary/20">
+<div class="flex items-center gap-4">
+<div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+<span class="material-symbols-outlined">pill</span>
+</div>
+<div class="flex flex-col">
+<span class="text-base font-bold text-slate-800 dark:text-white leading-tight">Ibuprofen</span>
+<span class="text-sm font-medium text-slate-500 dark:text-slate-400">5ml • Leo</span>
+</div>
+</div>
+<div class="flex flex-col items-end">
+<span class="text-xs font-semibold text-slate-400 dark:text-slate-500">08:30 AM</span>
+<div class="mt-1 h-2 w-2 rounded-full bg-primary"></div>
+</div>
+</div>
+<!-- Card 2: Weight Check -->
+<div class="group relative flex items-center justify-between gap-4 rounded-2xl bg-white dark:bg-slate-800 p-4 shadow-card hover:shadow-md transition-all duration-300 border border-transparent hover:border-blue-200 dark:hover:border-blue-900">
+<div class="flex items-center gap-4">
+<div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-900/20 text-blue-500">
+<span class="material-symbols-outlined">monitor_weight</span>
+</div>
+<div class="flex flex-col">
+<span class="text-base font-bold text-slate-800 dark:text-white leading-tight">Weight Check</span>
+<span class="text-sm font-medium text-slate-500 dark:text-slate-400">14.2kg • Leo</span>
+</div>
+</div>
+<div class="flex flex-col items-end">
+<span class="text-xs font-semibold text-slate-400 dark:text-slate-500">08:15 AM</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Group: Yesterday -->
+<div class="mb-6">
+<h3 class="mb-3 text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 pl-2">Yesterday</h3>
+<div class="flex flex-col gap-3">
+<!-- Card 3: Medicine -->
+<div class="group relative flex items-center justify-between gap-4 rounded-2xl bg-white dark:bg-slate-800 p-4 shadow-card hover:shadow-md transition-all duration-300">
+<div class="flex items-center gap-4">
+<div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+<span class="material-symbols-outlined">vaccines</span>
+</div>
+<div class="flex flex-col">
+<span class="text-base font-bold text-slate-800 dark:text-white leading-tight">Amoxicillin</span>
+<span class="text-sm font-medium text-slate-500 dark:text-slate-400">5ml • Leo</span>
+</div>
+</div>
+<div class="flex flex-col items-end">
+<span class="text-xs font-semibold text-slate-400 dark:text-slate-500">08:00 PM</span>
+</div>
+</div>
+<!-- Card 4: Symptom/Temp -->
+<div class="group relative flex items-center justify-between gap-4 rounded-2xl bg-white dark:bg-slate-800 p-4 shadow-card hover:shadow-md transition-all duration-300 border border-transparent hover:border-rose-200 dark:hover:border-rose-900">
+<div class="flex items-center gap-4">
+<div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-rose-50 dark:bg-rose-900/20 text-rose">
+<span class="material-symbols-outlined">thermometer</span>
+</div>
+<div class="flex flex-col">
+<span class="text-base font-bold text-slate-800 dark:text-white leading-tight">Temperature</span>
+<span class="text-sm font-medium text-slate-500 dark:text-slate-400">38.5°C • Leo</span>
+</div>
+</div>
+<div class="flex flex-col items-end">
+<span class="text-xs font-semibold text-slate-400 dark:text-slate-500">07:45 PM</span>
+<div class="mt-1 h-2 w-2 rounded-full bg-rose"></div>
+</div>
+</div>
+<!-- Card 5: Note -->
+<div class="group relative flex items-center justify-between gap-4 rounded-2xl bg-white dark:bg-slate-800 p-4 shadow-card hover:shadow-md transition-all duration-300">
+<div class="flex items-center gap-4">
+<div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-orange-50 dark:bg-orange-900/20 text-orange-400">
+<span class="material-symbols-outlined">sticky_note_2</span>
+</div>
+<div class="flex flex-col">
+<span class="text-base font-bold text-slate-800 dark:text-white leading-tight">Doctor Note</span>
+<span class="text-sm font-medium text-slate-500 dark:text-slate-400">"Drink plenty of water"</span>
+</div>
+</div>
+<div class="flex flex-col items-end">
+<span class="text-xs font-semibold text-slate-400 dark:text-slate-500">10:00 AM</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Filler content to show scrolling -->
+<div class="h-12 flex items-center justify-center">
+<span class="text-xs text-slate-300 dark:text-slate-700 italic">End of history for this week</span>
+</div>
+</main>
+<!-- Floating Share Button -->
+<div class="fixed bottom-24 left-0 right-0 z-20 flex justify-center px-6 md:absolute">
+<button class="flex w-full max-w-sm items-center justify-center gap-3 rounded-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 py-4 shadow-lg shadow-slate-900/10 transition-transform active:scale-95">
+<span class="material-symbols-outlined text-[20px]">ios_share</span>
+<span class="text-base font-bold">Share with Doctor</span>
+</button>
+</div>
+<!-- Bottom Nav -->
+<nav class="fixed bottom-0 w-full md:absolute z-30 flex gap-2 border-t border-slate-100 dark:border-white/5 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-md px-4 pb-6 pt-2 max-w-md">
+<a class="flex flex-1 flex-col items-center justify-end gap-1 text-slate-400 dark:text-slate-500 transition-colors hover:text-primary" href="#">
+<span class="material-symbols-outlined text-[24px]">grid_view</span>
+<p class="text-[10px] font-medium leading-normal tracking-[0.015em]">Dashboard</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-end gap-1 text-slate-400 dark:text-slate-500 transition-colors hover:text-primary" href="#">
+<span class="material-symbols-outlined text-[24px]">medication</span>
+<p class="text-[10px] font-medium leading-normal tracking-[0.015em]">Cabinet</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-end gap-1 text-primary" href="#">
+<div class="relative">
+<span class="material-symbols-outlined text-[24px] font-variation-settings-'FILL'1">history</span>
+<!-- Small indicator dot for active state -->
+<span class="absolute -right-0.5 -top-0.5 flex h-2 w-2">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+</span>
+</div>
+<p class="text-[10px] font-medium leading-normal tracking-[0.015em]">History</p>
+</a>
+</nav>
+</div>
+</body></html>

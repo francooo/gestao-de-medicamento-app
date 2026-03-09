@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Gentle Care Tracker - Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Spline+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#2beeba",
+                        "primary-content": "#0d1b18", // Dark text for contrast on bright primary
+                        "background-light": "#f8fcfb", // Matches component bg
+                        "background-dark": "#10221d",
+                        "surface-light": "#ffffff",
+                        "surface-dark": "#1a2e29",
+                        "lavender": "#B8B8D1",
+                        "lavender-light": "#F2F4F8",
+                        "rose": "#E89D9D",
+                        "rose-light": "#FFF0F0",
+                        "text-main": "#0d1b18",
+                        "text-muted": "#4c9a85",
+                    },
+                    fontFamily: {
+                        "display": ["Spline Sans", "Noto Sans", "sans-serif"],
+                        "body": ["Spline Sans", "Noto Sans", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "1rem", "lg": "1.5rem", "xl": "2rem", "2xl": "2.5rem", "full": "9999px" },
+                    boxShadow: {
+                        "soft": "0 8px 24px -6px rgba(43, 238, 186, 0.15)",
+                        "card": "0 4px 20px -2px rgba(0, 0, 0, 0.05)"
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        /* Hide scrollbar for Chrome, Safari and Opera */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        /* Hide scrollbar for IE, Edge and Firefox */
+        .no-scrollbar {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-text-main dark:text-gray-100 min-h-screen flex justify-center">
+<!-- Mobile Container -->
+<div class="relative flex h-full min-h-screen w-full max-w-md flex-col overflow-hidden bg-background-light dark:bg-background-dark shadow-2xl">
+<!-- Header Section -->
+<header class="pt-8 px-6 pb-2 bg-background-light dark:bg-background-dark sticky top-0 z-10">
+<div class="flex items-center justify-between mb-2">
+<div class="flex flex-col">
+<h1 class="text-2xl font-bold tracking-tight text-text-main dark:text-white">Good Morning, Sarah</h1>
+<p class="text-lavender font-bold text-xs tracking-widest uppercase mt-1">OCT 24 • THURSDAY</p>
+</div>
+<div class="relative group cursor-pointer">
+<span class="material-symbols-outlined text-text-muted dark:text-primary/70 text-3xl">notifications</span>
+<span class="absolute top-0 right-0 block h-2.5 w-2.5 rounded-full bg-rose ring-2 ring-white dark:ring-background-dark"></span>
+</div>
+</div>
+</header>
+<!-- Profile Selector (Horizontal Scroll) -->
+<section class="py-4 pl-6 overflow-x-auto no-scrollbar w-full">
+<div class="flex gap-4 pr-6">
+<!-- Profile 1: Active -->
+<div class="flex flex-col items-center gap-2 group cursor-pointer min-w-[64px]">
+<div class="relative p-1 rounded-full border-2 border-primary">
+<div class="size-16 rounded-full bg-cover bg-center shadow-sm" data-alt="Portrait of a young child named Leo smiling" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuB900wM7OC9J0Ps93Sq6a3Sd9bHXVmE3jkz01hEaxD3gUfWfsLHPZp3Ny3EAkDD4FRN0h2Quh0MrU4gqv-zKwl-ZmLmgdmhWLM6wE9mePEwOWQztzFkc1MGKSITwPsVXdexLG00gS6zh9TiaTOQiX-m26EXJw7VAxrBJplEBzO0Bbtmv2caPf1gVw-pt2W-4hkM1t7p1R2QeaGNUwWsVSD-rjOn8bdgViKQ262hFgU5RhEmQoIziSYz1MN_yz0NH0gH7pmHm21gLe8");'></div>
+<div class="absolute bottom-0 right-0 bg-primary text-primary-content rounded-full p-1 border-2 border-white dark:border-background-dark flex items-center justify-center size-6">
+<span class="material-symbols-outlined text-[14px] font-bold">check</span>
+</div>
+</div>
+<span class="text-sm font-bold text-primary dark:text-primary">Leo</span>
+</div>
+<!-- Profile 2 -->
+<div class="flex flex-col items-center gap-2 group cursor-pointer min-w-[64px] opacity-60 hover:opacity-100 transition-opacity">
+<div class="relative p-1 rounded-full border-2 border-transparent hover:border-lavender">
+<div class="size-16 rounded-full bg-cover bg-center bg-gray-200" data-alt="Portrait of an adult male named Dad" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDR_Wq-UMVzFIU5p0zE65G3Rciq4GNtPnN5RcQdYJ6gDZnFtNbjcvZ8pCDdsx7IjdYXs6ihBZp61pkfA7gBDdjlF1d0kwxIs9wWSczJDqolFUadeSxkA4MaA3ZdvPbStd8bLRee-3R3IhplsGOdul5afJqrdDWL_fYECCUWL3D7v8047Uvqz23y_5MqCeie90EgVCp3hDs1yxZhY26v2rmBdpCKL1IVlbnY5qiqQwLnzvAVh7XOwHusac8Vzo3PqTldu1QfdrYFEZA");'></div>
+</div>
+<span class="text-sm font-medium text-text-muted dark:text-gray-400">Dad</span>
+</div>
+<!-- Profile 3 -->
+<div class="flex flex-col items-center gap-2 group cursor-pointer min-w-[64px] opacity-60 hover:opacity-100 transition-opacity">
+<div class="relative p-1 rounded-full border-2 border-transparent hover:border-lavender">
+<div class="size-16 rounded-full bg-cover bg-center bg-gray-200" data-alt="Portrait of an adult female named Mom" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAcKNA23u0sDrd-3sJ0asySVT72JSNw7f3YNh6cb8oi_uy0br9-WJOP5jqzaSci8cImuggDpD3rSm5NlpSN7o6UoHEo4_xEC22XM_6AW39hqZrftSuPpuOshJkwNtPa-7_JGyb8t96NAdMGDbyeyNqODdSlYzdpzUbyo1PGnvf4prJxBEawDGxfvIu61rGpaVS37JtAzT0ZkbTQ9ziQFv9qJ-wSg2LDZyyf8a1xR4sNOFi1NkGZBO0Te2Kkr228KLaC0ar90ScSCqI");'></div>
+</div>
+<span class="text-sm font-medium text-text-muted dark:text-gray-400">Mom</span>
+</div>
+<!-- Add New Profile -->
+<div class="flex flex-col items-center gap-2 group cursor-pointer min-w-[64px]">
+<div class="relative p-1 rounded-full border-2 border-dashed border-lavender flex items-center justify-center size-[72px] bg-lavender-light/50 dark:bg-surface-dark">
+<span class="material-symbols-outlined text-lavender text-2xl">add</span>
+</div>
+<span class="text-sm font-medium text-text-muted dark:text-gray-400">Add</span>
+</div>
+</div>
+</section>
+<!-- Main Dashboard Feed -->
+<main class="flex-1 overflow-y-auto no-scrollbar px-6 pb-24 pt-2 flex flex-col gap-6">
+<!-- High Priority: Next Dose Card -->
+<div class="w-full bg-surface-light dark:bg-surface-dark rounded-xl shadow-soft overflow-hidden relative group transition-transform hover:scale-[1.01]">
+<div class="absolute left-0 top-0 bottom-0 w-1.5 bg-lavender"></div>
+<div class="p-5 flex flex-col gap-4">
+<div class="flex justify-between items-start">
+<div class="flex gap-3 items-center">
+<div class="bg-lavender-light dark:bg-gray-700 p-2.5 rounded-full text-lavender dark:text-gray-300">
+<span class="material-symbols-outlined text-2xl">pill</span>
+</div>
+<div>
+<h3 class="text-lg font-bold text-text-main dark:text-white leading-tight">Amoxicillin</h3>
+<p class="text-text-muted dark:text-gray-400 text-sm font-medium">5ml • Liquid</p>
+</div>
+</div>
+<div class="bg-rose-light dark:bg-rose/20 text-rose dark:text-rose-300 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">schedule</span> Due 9:00 AM
+                        </div>
+</div>
+<div class="flex items-center justify-between mt-1">
+<div class="flex -space-x-2">
+<!-- Context avatars/icons if needed, currently hidden for clean look -->
+</div>
+<button class="bg-primary hover:bg-primary/90 text-primary-content px-6 py-3 rounded-full font-bold text-sm transition-colors shadow-lg shadow-primary/20 flex items-center gap-2">
+<span class="material-symbols-outlined text-lg">check</span>
+                            Log Now
+                        </button>
+</div>
+</div>
+</div>
+<!-- Mini Widgets Row -->
+<div class="grid grid-cols-2 gap-4">
+<!-- Weight Tracker Widget -->
+<div class="bg-surface-light dark:bg-surface-dark rounded-xl p-4 shadow-card flex flex-col justify-between h-36 relative overflow-hidden">
+<div class="flex justify-between items-start z-10">
+<div>
+<p class="text-xs font-bold text-lavender uppercase tracking-wider">Weight</p>
+<h4 class="text-2xl font-bold text-text-main dark:text-white mt-1">14.2<span class="text-sm text-text-muted ml-1 font-normal">kg</span></h4>
+</div>
+<div class="bg-primary/10 p-1.5 rounded-full text-primary">
+<span class="material-symbols-outlined text-lg">monitor_weight</span>
+</div>
+</div>
+<!-- Sparkline SVG -->
+<div class="absolute bottom-0 left-0 right-0 h-16 opacity-50">
+<svg class="w-full h-full" preserveaspectratio="none" viewbox="0 0 100 40">
+<path d="M0 35 Q 20 30, 40 25 T 100 10 L 100 40 L 0 40 Z" fill="rgba(43, 238, 186, 0.2)"></path>
+<path d="M0 35 Q 20 30, 40 25 T 100 10" fill="none" stroke="#2beeba" stroke-linecap="round" stroke-width="3"></path>
+</svg>
+</div>
+<p class="text-[10px] text-text-muted dark:text-gray-500 z-10 mt-auto pt-2">+0.4kg since last check</p>
+</div>
+<!-- Next Up Widget (Low Priority) -->
+<div class="bg-surface-light dark:bg-surface-dark rounded-xl p-4 shadow-card flex flex-col justify-between h-36">
+<div class="flex justify-between items-start">
+<div>
+<p class="text-xs font-bold text-lavender uppercase tracking-wider">Upcoming</p>
+<h4 class="text-lg font-bold text-text-main dark:text-white mt-1">Ibuprofen</h4>
+<p class="text-xs text-text-muted dark:text-gray-400">Tablet • 200mg</p>
+</div>
+<div class="bg-lavender-light dark:bg-gray-700 p-1.5 rounded-full text-lavender dark:text-gray-300">
+<span class="material-symbols-outlined text-lg">event_upcoming</span>
+</div>
+</div>
+<div class="mt-auto">
+<div class="flex items-center gap-2 text-text-muted dark:text-gray-400 text-sm">
+<span class="material-symbols-outlined text-base">schedule</span>
+<span>2:00 PM</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Yesterday's Summary (Collapsible/Soft) -->
+<div class="mt-2">
+<h3 class="text-sm font-bold text-lavender uppercase tracking-widest mb-3 pl-1">Yesterday</h3>
+<div class="bg-surface-light dark:bg-surface-dark rounded-xl p-4 shadow-card flex items-center justify-between opacity-80 hover:opacity-100 transition-opacity cursor-pointer">
+<div class="flex items-center gap-3">
+<div class="bg-green-100 dark:bg-green-900/30 p-2 rounded-full text-green-600 dark:text-green-400">
+<span class="material-symbols-outlined text-xl">check_circle</span>
+</div>
+<div>
+<p class="text-text-main dark:text-white font-bold text-sm">All Doses Logged</p>
+<p class="text-xs text-text-muted dark:text-gray-400">Leo had a good day</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-lavender">chevron_right</span>
+</div>
+</div>
+</main>
+<!-- Floating Action Button (FAB) -->
+<div class="absolute bottom-24 right-6 z-20">
+<button class="bg-primary hover:bg-primary/90 text-primary-content rounded-full size-14 shadow-lg shadow-primary/30 flex items-center justify-center transition-transform hover:scale-105 active:scale-95 group">
+<span class="material-symbols-outlined text-3xl transition-transform group-hover:rotate-90">add</span>
+</button>
+</div>
+<!-- Navigation Bar -->
+<nav class="border-t border-[#e7f3f0] dark:border-gray-800 bg-background-light dark:bg-background-dark px-6 pb-6 pt-2 z-30">
+<div class="flex justify-between items-end">
+<a class="flex flex-col items-center gap-1 group w-16" href="#">
+<div class="flex h-8 items-center justify-center text-text-main dark:text-white transition-colors group-hover:text-primary">
+<span class="material-symbols-outlined text-[28px] filled">home</span>
+</div>
+<span class="text-[10px] font-bold text-text-main dark:text-white">Home</span>
+</a>
+<a class="flex flex-col items-center gap-1 group w-16" href="#">
+<div class="flex h-8 items-center justify-center text-text-muted dark:text-gray-500 transition-colors group-hover:text-primary">
+<span class="material-symbols-outlined text-[28px]">history</span>
+</div>
+<span class="text-[10px] font-medium text-text-muted dark:text-gray-500">History</span>
+</a>
+<a class="flex flex-col items-center gap-1 group w-16" href="#">
+<div class="flex h-8 items-center justify-center text-text-muted dark:text-gray-500 transition-colors group-hover:text-primary">
+<span class="material-symbols-outlined text-[28px]">settings</span>
+</div>
+<span class="text-[10px] font-medium text-text-muted dark:text-gray-500">Settings</span>
+</a>
+</div>
+</nav>
+</div>
+</body></html>

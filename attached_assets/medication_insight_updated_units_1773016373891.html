@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Medication Insight - Gentle Care Tracker</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Spline+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#2beeba",
+                        "primary-dark": "#1eb890", // Darker shade for text on primary
+                        "background-light": "#f6f8f7",
+                        "background-dark": "#10221d",
+                        "soft-rose": "#FFF0F0",
+                        "text-rose": "#C04D4D",
+                        "lavender": "#E8E8F5",
+                        "text-lavender": "#5A5A75",
+                    },
+                    fontFamily: {
+                        "display": ["Spline Sans", "sans-serif"],
+                        "body": ["Spline Sans", "sans-serif"],
+                    },
+                    borderRadius: {"DEFAULT": "1rem", "lg": "1.5rem", "xl": "2rem", "2xl": "2.5rem", "full": "9999px"},
+                    boxShadow: {
+                        'soft': '0 8px 30px rgba(0,0,0,0.06)',
+                        'glow': '0 0 20px rgba(43, 238, 186, 0.3)',
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        /* Custom scrollbar hiding */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        
+        /* Gentle pulse animation for loading state */
+        @keyframes gentle-pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(0.98); }
+        }
+        .animate-gentle-pulse {
+            animation: gentle-pulse 3s ease-in-out infinite;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-gray-800 font-display flex justify-center items-end min-h-screen overflow-hidden">
+<!-- Background Context (Blurred Dashboard Simulation) -->
+<div class="fixed inset-0 w-full h-full bg-cover bg-center opacity-40 mix-blend-overlay pointer-events-none" data-alt="Blurred abstract floral background representing a calm home environment" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCMXj8E7gF4Um6h4baTCitcQUqcS2EJzIbuDVOU8SnEE0zICKffnW9w6eGT74de1QgLc64u_oyKJSIs6qOqClgSsPATGFFHV91YY46_K-8c6fmNrMlblOaeRax0QmYd2mcpOz7MIICaBXdR412Kl-9_M03qeqa8X1xXny5hToVxL_jGDZAG2CNJ1VCdMS83hcu0_vuJIuufOkUVTFUmjetKcRxu6x2JS42B5EqOXoVQ8UToGHhbs4cD-46eSRezaIgmv5NeLUfyWdA');">
+</div>
+<!-- Main Modal Sheet -->
+<main class="relative w-full max-w-md bg-background-light dark:bg-background-dark rounded-t-[32px] shadow-2xl h-[92vh] flex flex-col overflow-hidden transition-all duration-500 ease-out transform translate-y-0">
+<!-- Drag Handle Area -->
+<div class="w-full flex justify-center pt-5 pb-2 shrink-0 cursor-pointer">
+<div class="w-16 h-1.5 bg-gray-300 rounded-full"></div>
+</div>
+<!-- Header Section -->
+<header class="px-8 pt-4 pb-6 shrink-0">
+<div class="flex items-start justify-between">
+<div>
+<div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-lavender/50 text-text-lavender mb-3">
+<span class="material-symbols-outlined text-[16px]">smart_toy</span>
+<span class="text-xs font-bold uppercase tracking-wider">AI Summary</span>
+</div>
+<h1 class="text-3xl font-bold text-slate-900 dark:text-slate-100">Amoxicillin</h1>
+<p class="text-slate-500 text-sm mt-1">Oral Suspension • 250mg/5ml</p>
+</div>
+<button class="p-2 rounded-full hover:bg-gray-100 text-slate-400 transition-colors">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+</header>
+<!-- Scrollable Content -->
+<div class="flex-1 overflow-y-auto no-scrollbar px-6 pb-24">
+<!-- Dosage Calculation Card -->
+<div class="relative overflow-hidden rounded-[32px] bg-primary p-8 mb-8 shadow-glow group">
+<!-- Decorative background blobs -->
+<div class="absolute -right-8 -top-8 w-32 h-32 bg-white/20 rounded-full blur-2xl"></div>
+<div class="absolute -left-8 -bottom-8 w-24 h-24 bg-white/10 rounded-full blur-xl"></div>
+<div class="relative z-10">
+<div class="flex items-center gap-2 text-primary-dark mb-2 opacity-90">
+<span class="material-symbols-outlined text-xl">calculate</span>
+<span class="text-xs font-bold tracking-widest uppercase">Calculated Safe Dose</span>
+</div>
+<div class="flex items-baseline gap-1 mt-4">
+<div class="flex items-center bg-white/30 px-5 py-2 rounded-2xl backdrop-blur-sm">
+<span class="text-5xl font-bold text-slate-900 tracking-tight">4.5</span>
+<span class="text-2xl font-bold text-slate-900/40 mx-3">-</span>
+<span class="text-5xl font-bold text-slate-900 tracking-tight">5</span>
+<span class="text-2xl font-semibold text-slate-900/60 ml-3 lowercase">ml</span>
+</div>
+</div>
+<div class="flex items-center justify-between mt-6 bg-white/20 rounded-2xl p-4 backdrop-blur-sm">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-white/30 flex items-center justify-center text-slate-900">
+<span class="material-symbols-outlined">schedule</span>
+</div>
+<div>
+<p class="text-xs text-primary-dark font-bold uppercase tracking-wide">Frequency</p>
+<p class="text-slate-900 font-bold">Every 8 hours</p>
+</div>
+</div>
+<div class="h-8 w-[1px] bg-slate-900/10"></div>
+<div class="flex items-center gap-3 pr-2">
+<div class="w-10 h-10 rounded-full bg-white/30 flex items-center justify-center text-slate-900">
+<span class="material-symbols-outlined">calendar_today</span>
+</div>
+<div>
+<p class="text-xs text-primary-dark font-bold uppercase tracking-wide">Duration</p>
+<p class="text-slate-900 font-bold">5 Days</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- "Watch Out" Section -->
+<div class="mb-8">
+<h2 class="text-lg font-bold text-slate-900 dark:text-slate-100 mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-text-rose">gpp_maybe</span>
+                    Watch Out
+                </h2>
+<div class="bg-soft-rose rounded-[28px] p-6 border border-rose-100">
+<ul class="space-y-4">
+<li class="flex gap-4 items-start">
+<div class="w-6 h-6 rounded-full bg-white shrink-0 flex items-center justify-center text-text-rose mt-0.5 shadow-sm">
+<span class="material-symbols-outlined text-[16px]">restaurant</span>
+</div>
+<div>
+<p class="text-slate-800 font-medium">Take with food</p>
+<p class="text-slate-500 text-sm leading-relaxed mt-1">To avoid tummy aches, it's best to give this dose right after a meal or snack.</p>
+</div>
+</li>
+<li class="flex gap-4 items-start">
+<div class="w-6 h-6 rounded-full bg-white shrink-0 flex items-center justify-center text-text-rose mt-0.5 shadow-sm">
+<span class="material-symbols-outlined text-[16px]">bedtime</span>
+</div>
+<div>
+<p class="text-slate-800 font-medium">May cause drowsiness</p>
+<p class="text-slate-500 text-sm leading-relaxed mt-1">Leo might be a bit sleepier than usual. Monitor during playtime.</p>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<!-- Full Leaflet Link -->
+<div class="text-center mb-6">
+<button class="inline-flex items-center gap-2 text-slate-400 hover:text-primary transition-colors text-sm font-medium py-2 px-4 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800">
+<span class="material-symbols-outlined text-[18px]">description</span>
+                    Read official leaflet (PDF)
+                </button>
+</div>
+</div>
+<!-- Sticky Bottom Action -->
+<div class="absolute bottom-0 left-0 w-full p-6 bg-gradient-to-t from-background-light via-background-light to-transparent dark:from-background-dark dark:via-background-dark pt-12">
+<button class="w-full bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 py-4 rounded-full font-bold text-lg shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-transform flex items-center justify-center gap-2">
+<span class="material-symbols-outlined">check_circle</span>
+                Got it, Thanks
+            </button>
+</div>
+</main>
+<!-- Simulating Loading State (Hidden by default, structure for developer reference) -->
+<!-- 
+    <div class="absolute z-50 inset-0 flex flex-col items-center justify-center bg-white/80 backdrop-blur-sm rounded-t-[32px]" style="display: none;">
+        <div class="w-20 h-20 bg-primary/20 rounded-full flex items-center justify-center animate-gentle-pulse mb-6">
+            <span class="material-symbols-outlined text-4xl text-primary">description</span>
+        </div>
+        <h3 class="text-xl font-bold text-slate-800 mb-2">Reading leaflet...</h3>
+        <p class="text-slate-500">Analyzing safety data for Leo</p>
+    </div> 
+    -->
+</body></html>

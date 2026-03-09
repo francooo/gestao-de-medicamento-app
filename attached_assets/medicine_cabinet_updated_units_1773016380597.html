@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Gentle Care Tracker - Medicine Cabinet</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Spline+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Theme Config -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#2beeba", // Minty Green from user request
+                        "primary-dark": "#24c79a", // Darker shade for better text contrast if needed
+                        "background-light": "#FFFCF9", // Warm Cream from PRD
+                        "background-dark": "#10221d",
+                        "surface-light": "#FFFFFF",
+                        "surface-dark": "#1a332d",
+                        "text-main": "#4A5D58", // Deep Forest Green from PRD
+                        "text-muted": "#B8B8D1", // Muted Lavender from PRD
+                        "rose-soft": "#E89D9D", // Soft Rose from PRD
+                        "mint-soft": "#E8F1EE", // Soft Mint background
+                    },
+                    fontFamily: {
+                        "display": ["Spline Sans", "sans-serif"],
+                        "body": ["Spline Sans", "sans-serif"],
+                    },
+                    borderRadius: {
+                        "DEFAULT": "1rem",
+                        "lg": "1.5rem",
+                        "xl": "2rem",
+                        "2xl": "2.5rem",
+                        "full": "9999px",
+                    },
+                    boxShadow: {
+                        "soft": "0 8px 24px -6px rgba(124, 154, 146, 0.15)",
+                        "glow": "0 0 0 4px rgba(43, 238, 186, 0.2)",
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Spline Sans', sans-serif;
+            background-color: #FFFCF9; /* Fallback */
+        }
+        
+        /* Custom scrollbar for clean look */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background-color: #E8F1EE;
+            border-radius: 20px;
+        }
+
+        /* Focus styles for inputs to match PRD "Sage glow ring" adaptation */
+        .input-soft:focus {
+            background-color: white;
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(43, 238, 186, 0.25);
+            border-color: #2beeba;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-text-main dark:text-slate-100 min-h-screen flex flex-col items-center justify-start overflow-x-hidden selection:bg-primary/30">
+<div class="relative w-full max-w-md mx-auto min-h-screen flex flex-col bg-background-light dark:bg-background-dark shadow-2xl overflow-hidden">
+<!-- Header -->
+<header class="flex items-center justify-between px-6 pt-8 pb-4 bg-background-light dark:bg-surface-dark sticky top-0 z-20 backdrop-blur-sm bg-opacity-95 dark:bg-opacity-95">
+<button class="text-text-muted hover:text-text-main transition-colors text-sm font-medium p-2 -ml-2 rounded-full hover:bg-black/5 dark:hover:bg-white/10">
+                Cancel
+            </button>
+<h1 class="text-lg font-bold text-text-main dark:text-white tracking-tight">Add Medication</h1>
+<button class="bg-primary hover:bg-primary-dark text-slate-900 font-bold text-sm px-5 py-2 rounded-full shadow-soft transition-all transform active:scale-95">
+                Save
+            </button>
+</header>
+<!-- Main Content -->
+<main class="flex-1 px-6 pb-24 overflow-y-auto">
+<!-- Context Banner -->
+<div class="mb-6 flex items-center justify-center">
+<div class="inline-flex items-center gap-2 bg-mint-soft dark:bg-white/5 px-4 py-2 rounded-full border border-primary/10">
+<span class="material-symbols-outlined text-primary text-[18px]">child_care</span>
+<p class="text-sm font-medium text-text-main dark:text-slate-200">
+                        Adding for <span class="font-bold">Leo</span> <span class="text-text-muted dark:text-slate-400 text-xs ml-1">(14kg)</span>
+</p>
+</div>
+</div>
+<!-- Photo Scanner Hero -->
+<section class="mb-8 group">
+<div class="relative w-full aspect-[4/3] bg-mint-soft dark:bg-surface-dark rounded-2xl border-2 border-dashed border-primary/40 hover:border-primary transition-all cursor-pointer overflow-hidden flex flex-col items-center justify-center text-center p-6 shadow-sm hover:shadow-soft active:scale-[0.99]">
+<!-- Content -->
+<div class="z-10 flex flex-col items-center gap-3 transition-transform duration-300 group-hover:-translate-y-1">
+<div class="h-16 w-16 bg-white dark:bg-white/10 rounded-full flex items-center justify-center shadow-sm text-primary">
+<span class="material-symbols-outlined text-[32px]">linked_camera</span>
+</div>
+<div>
+<h3 class="text-text-main dark:text-white font-bold text-lg">Scan Label</h3>
+<p class="text-text-muted text-sm mt-1 max-w-[200px] mx-auto leading-relaxed">Snap a photo of the box to auto-fill details instantly.</p>
+</div>
+<div class="mt-2 bg-primary/10 text-primary-dark dark:text-primary px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
+                            AI Enabled
+                        </div><p class="text-[10px] text-primary-dark dark:text-primary/70 font-medium mt-1 uppercase tracking-tight">AI will auto-detect units</p>
+</div>
+<!-- Decorative Background Abstract -->
+<div class="absolute inset-0 opacity-30 pointer-events-none" style="background-image: radial-gradient(circle at 50% 120%, rgba(43, 238, 186, 0.4) 0%, transparent 60%);"></div>
+</div>
+</section>
+<!-- Form Section -->
+<section class="flex flex-col gap-6">
+<!-- Name Input -->
+<div class="group">
+<label class="block text-xs font-bold text-text-muted uppercase tracking-widest mb-2 pl-4">Medicine Name</label>
+<div class="relative">
+<div class="absolute left-4 top-1/2 -translate-y-1/2 text-text-muted group-focus-within:text-primary transition-colors">
+<span class="material-symbols-outlined">medication</span>
+</div>
+<input class="input-soft w-full bg-white dark:bg-surface-dark text-text-main dark:text-white placeholder-gray-300 dark:placeholder-gray-600 font-bold text-lg rounded-2xl border-0 py-4 pl-12 pr-4 shadow-sm ring-1 ring-slate-100 dark:ring-white/10 transition-all" placeholder="e.g. Ibuprofen" type="text"/>
+</div>
+</div>
+<!-- Type Toggle -->
+<div>
+<label class="block text-xs font-bold text-text-muted uppercase tracking-widest mb-3 pl-4">Type</label>
+<div class="flex p-1 bg-white dark:bg-surface-dark rounded-full shadow-sm ring-1 ring-slate-100 dark:ring-white/10 relative isolate">
+<!-- Active Indicator (Simulated with absolute positioning for visuals, normally JS handles this) -->
+<div class="absolute left-1 top-1 bottom-1 w-[32%] bg-primary rounded-full z-[-1] opacity-20 dark:opacity-30"></div>
+<label class="flex-1 cursor-pointer">
+<input checked="" class="peer sr-only" name="type" type="radio" value="liquid"/>
+<div class="flex items-center justify-center gap-2 py-3 px-2 rounded-full transition-all peer-checked:text-slate-900 peer-checked:font-bold text-text-muted hover:bg-gray-50 dark:hover:bg-white/5">
+<span class="material-symbols-outlined text-[20px] peer-checked:text-primary-dark">water_drop</span>
+<span class="text-sm">Liquid</span>
+</div>
+</label>
+<label class="flex-1 cursor-pointer">
+<input class="peer sr-only" name="type" type="radio" value="tablet"/>
+<div class="flex items-center justify-center gap-2 py-3 px-2 rounded-full transition-all peer-checked:bg-primary peer-checked:text-slate-900 peer-checked:font-bold text-text-muted hover:bg-gray-50 dark:hover:bg-white/5">
+<span class="material-symbols-outlined text-[20px]">pill</span>
+<span class="text-sm">Tablet</span>
+</div>
+</label>
+<label class="flex-1 cursor-pointer">
+<input class="peer sr-only" name="type" type="radio" value="other"/>
+<div class="flex items-center justify-center gap-2 py-3 px-2 rounded-full transition-all peer-checked:bg-primary peer-checked:text-slate-900 peer-checked:font-bold text-text-muted hover:bg-gray-50 dark:hover:bg-white/5">
+<span class="material-symbols-outlined text-[20px]">vaccines</span>
+<span class="text-sm">Other</span>
+</div>
+</label>
+</div>
+</div>
+<!-- Strength Input -->
+<div class="group">
+<label class="block text-xs font-bold text-text-muted uppercase tracking-widest mb-2 pl-4">Strength / Concentration</label>
+<div class="relative"><div class="flex gap-2">
+<div class="relative flex-1">
+<div class="absolute left-4 top-1/2 -translate-y-1/2 text-text-muted group-focus-within:text-primary transition-colors">
+<span class="material-symbols-outlined">science</span>
+</div>
+<input class="input-soft w-full bg-white dark:bg-surface-dark text-text-main dark:text-white placeholder-gray-300 dark:placeholder-gray-600 font-medium text-lg rounded-2xl border-0 py-4 pl-12 pr-4 shadow-sm ring-1 ring-slate-100 dark:ring-white/10 transition-all" placeholder="e.g. 100" step="any" type="number"/>
+</div>
+<div class="relative w-32">
+<select class="input-soft w-full bg-white dark:bg-surface-dark text-text-main dark:text-white font-bold text-base rounded-2xl border-0 py-4 px-4 shadow-sm ring-1 ring-slate-100 dark:ring-white/10 appearance-none transition-all cursor-pointer">
+<option value="mg">mg</option>
+<option value="ml">ml</option>
+<option value="drops">drops</option>
+<option value="mcg">mcg</option>
+<option value="units">units</option>
+</select>
+<div class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-text-muted">
+<span class="material-symbols-outlined">expand_more</span>
+</div>
+</div>
+</div></div>
+<p class="text-xs text-text-muted mt-2 pl-4">Enter the numeric value and select unit (ml, mg, drops). AI detects this from labels.</p>
+</div>
+<!-- Notes Input -->
+<div class="group">
+<label class="block text-xs font-bold text-text-muted uppercase tracking-widest mb-2 pl-4">Instructions / Notes</label>
+<textarea class="input-soft w-full bg-white dark:bg-surface-dark text-text-main dark:text-white placeholder-gray-300 dark:placeholder-gray-600 font-normal text-base rounded-2xl border-0 py-4 px-4 shadow-sm ring-1 ring-slate-100 dark:ring-white/10 resize-none transition-all" placeholder="Take with food, keep refrigerated..." rows="3"></textarea>
+</div>
+</section>
+</main>
+<!-- Bottom Navigation Bar (reused from components list but simplified for this view context) -->
+<nav class="sticky bottom-0 z-30 w-full bg-background-light/90 dark:bg-background-dark/90 backdrop-blur-lg border-t border-[#e7f3f0] dark:border-white/5 pb-5 pt-3 px-6">
+<div class="flex justify-between items-center gap-4">
+<a class="flex flex-col items-center gap-1 opacity-50 hover:opacity-100 transition-opacity" href="#">
+<span class="material-symbols-outlined text-text-main dark:text-white text-[24px]">home</span>
+<span class="text-[10px] font-bold text-text-main dark:text-white">Home</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-primary" href="#">
+<span class="material-symbols-outlined text-[24px] fill-current">medication_liquid</span>
+<span class="text-[10px] font-bold">Meds</span>
+</a>
+<!-- Floating Add Button in Nav -->
+<div class="-mt-8">
+<button class="h-14 w-14 rounded-full bg-primary text-slate-900 shadow-lg shadow-primary/30 flex items-center justify-center transform hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-[32px]">add</span>
+</button>
+</div>
+<a class="flex flex-col items-center gap-1 opacity-50 hover:opacity-100 transition-opacity" href="#">
+<span class="material-symbols-outlined text-text-main dark:text-white text-[24px]">calendar_month</span>
+<span class="text-[10px] font-bold text-text-main dark:text-white">Log</span>
+</a>
+<a class="flex flex-col items-center gap-1 opacity-50 hover:opacity-100 transition-opacity" href="#">
+<span class="material-symbols-outlined text-text-main dark:text-white text-[24px]">history</span>
+<span class="text-[10px] font-bold text-text-main dark:text-white">History</span>
+</a>
+</div>
+</nav>
+</div>
+</body></html>
