@@ -40,7 +40,7 @@
 
 ### 2.2 Painel Principal — Home (`app/(tabs)/index.tsx`)
 - **Saudação dinâmica** por horário do dia (Bom Dia / Boa Tarde / Boa Noite)
-- **Seletor de perfil** horizontal com avatares por iniciais e cores personalizadas
+- **Seletor de perfil** horizontal com avatares por iniciais e cores personalizadas (perfis de demonstração padrão: "Leo", "Dad", "Mom" — nomes não traduzidos pois são dados de exemplo)
 - **Card de próxima dose**: exibe o medicamento mais urgente com badge "Agora" ou "Em Xh"
 - **Botão "Registrar"** que abre o Registrador de Dose diretamente
 - **Widget de Peso**: mostra o peso atual do perfil selecionado, data da última verificação e um gráfico sparkline decorativo
@@ -309,7 +309,7 @@ Para que as funcionalidades críticas funcionem corretamente, é necessário mig
 ### Fase 1 — Backend e Autenticação *(Alta prioridade)*
 Pré-requisito para tudo. Sem isso, o app não tem identidade de usuário.
 
-1. Expandir o schema Drizzle com todas as tabelas propostas (Section 7)
+1. Expandir o schema Drizzle com todas as tabelas propostas (Seção 7)
 2. Implementar rotas de autenticação: `POST /api/auth/register`, `POST /api/auth/login`, `POST /api/auth/logout`, `POST /api/auth/refresh`
 3. Middleware de autenticação JWT para proteger rotas privadas
 4. Integrar login com Google via OAuth 2.0
@@ -324,15 +324,22 @@ Migra perfis, medicamentos e logs do AsyncStorage para a API.
 3. Implementar cache local com sincronização em background (funcionar offline)
 4. Migrar dados existentes do AsyncStorage para o servidor na primeira sincronização
 
-### Fase 3 — Tela de Criação e Edição de Perfil *(Alta prioridade)*
-Funcionalidade prometida pela UI mas não implementada.
+### Fase 3 — Funcionalidades Sociais e Colaborativas *(Média prioridade)*
+Permite que múltiplos cuidadores acompanhem o mesmo paciente.
 
-1. Criar tela `app/add-profile.tsx` com formulário (nome, data de nascimento, peso, cor do avatar)
-2. Conectar botão "Adicionar" na tela Home a essa nova tela
-3. Permitir edição de perfil existente com tela `app/edit-profile.tsx`
-4. Calcular automaticamente a faixa de dose por idade além de peso
+1. Tela de gerenciamento de cuidadores por perfil
+2. Envio de convite por e-mail ou link para outro cuidador
+3. Feed em tempo real: notificar os cuidadores quando uma dose for registrada por outra pessoa
+4. Controle de permissões (administrador vs. visualizador — visualizador não pode adicionar medicamentos)
 
-### Fase 4 — Notificações e Lembretes *(Alta prioridade)*
+### Fase 4 — IA e Automação *(Média prioridade)*
+Transforma funcionalidades decorativas em recursos reais.
+
+1. **Escaneamento de rótulo**: integrar câmera (`expo-image-picker`) e enviar imagem ao backend que chama a API do Google Vision ou OpenAI para OCR e preencher o formulário automaticamente
+2. **Resumo IA real**: criar rota `/api/medications/insight` que chama a OpenAI com contexto do medicamento e peso do paciente, retornando alertas personalizados por medicamento
+3. **Bula oficial**: integrar com a base de dados da ANVISA ou Bulário Eletrônico para buscar e exibir a bula em PDF
+
+### Fase 5 — Notificações e Lembretes *(Alta prioridade)*
 Fundamental para que o app cumpra seu propósito de cuidado.
 
 1. Registrar o token Expo Push do dispositivo no servidor ao fazer login
@@ -341,22 +348,7 @@ Fundamental para que o app cumpra seu propósito de cuidado.
 4. Exibir resumo diário de doses pela manhã
 5. Tela de configuração de lembretes por medicamento
 
-### Fase 5 — IA e Automação *(Média prioridade)*
-Transforma funcionalidades decorativas em recursos reais.
-
-1. **Escaneamento de rótulo**: integrar câmera (`expo-image-picker`) e enviar imagem ao backend que chama a API do Google Vision ou OpenAI para OCR e preencher o formulário automaticamente
-2. **Resumo IA real**: criar rota `/api/medications/insight` que chama a OpenAI com contexto do medicamento e peso do paciente, retornando alertas personalizados
-3. **Bula oficial**: integrar com a base de dados da ANVISA ou Bulário Eletrônico para buscar e exibir a bula em PDF
-
-### Fase 6 — Compartilhamento e Colaboração *(Média prioridade)*
-Permite que múltiplos cuidadores acompanhem o mesmo paciente.
-
-1. Tela de gerenciamento de cuidadores por perfil
-2. Envio de convite por e-mail ou link
-3. Feed em tempo real: notificar os cuidadores quando uma dose for registrada por outra pessoa
-4. Controle de permissões (visualizador não pode adicionar medicamentos)
-
-### Fase 7 — Relatórios e Exportação *(Média prioridade)*
+### Fase 6 — Relatórios e Exportação *(Média prioridade)*
 Permite levar o histórico ao médico de forma profissional.
 
 1. Gerar PDF do histórico de doses por perfil e período (backend)
@@ -364,14 +356,13 @@ Permite levar o histórico ao médico de forma profissional.
 3. Gráficos reais de evolução de peso e temperatura ao longo do tempo
 4. Estatísticas de adesão ao tratamento (doses administradas vs. esperadas)
 
-### Fase 8 — Polimento e Funcionalidades Avançadas *(Baixa prioridade)*
-Refinamentos para tornar o app mais completo.
+### Fase 7 — Tela de Criação de Perfil *(Alta prioridade)*
+Funcionalidade prometida pela UI mas não implementada.
 
-1. Foto de avatar ou seleção de cor personalizada nos perfis
-2. Histórico de variação de peso com gráfico real
-3. Suporte a múltiplos idiomas além do português
-4. Widget de tela inicial (iOS/Android) com próxima dose
-5. Modo de emergência: exibir informações de dose sem autenticação
+1. Criar tela `app/add-profile.tsx` com formulário (nome, data de nascimento, peso, cor do avatar)
+2. Conectar botão "Adicionar" na tela Home a essa nova tela
+3. Permitir edição de perfil existente com tela `app/edit-profile.tsx`
+4. Calcular automaticamente a faixa de dose por idade além do peso
 
 ---
 
