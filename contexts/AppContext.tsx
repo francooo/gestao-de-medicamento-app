@@ -75,17 +75,17 @@ const DEFAULT_PROFILES: Profile[] = [
 ];
 
 const DEFAULT_MEDICATIONS: Medication[] = [
-  { id: "m1", profileId: "1", name: "Amoxicillin", type: "liquid", strength: 250, unit: "mg", notes: "Take with food", intervalHours: 8, durationDays: 5 },
-  { id: "m2", profileId: "1", name: "Ibuprofen", type: "liquid", strength: 200, unit: "mg", notes: "Avoid on empty stomach", intervalHours: 6, durationDays: 3 },
-  { id: "m3", profileId: "2", name: "Vitamin D", type: "tablet", strength: 1000, unit: "units", intervalHours: 24, durationDays: 30 },
+  { id: "m1", profileId: "1", name: "Amoxicillin", type: "liquid", strength: 250, unit: "mg", notes: "Tomar com alimento", intervalHours: 8, durationDays: 5 },
+  { id: "m2", profileId: "1", name: "Ibuprofen", type: "liquid", strength: 200, unit: "mg", notes: "Evitar estômago vazio", intervalHours: 6, durationDays: 3 },
+  { id: "m3", profileId: "2", name: "Vitamina D", type: "tablet", strength: 1000, unit: "units", intervalHours: 24, durationDays: 30 },
 ];
 
 const DEFAULT_LOGS: DoseLog[] = [
   { id: "l1", profileId: "1", medicationId: "m2", medicationName: "Ibuprofen", dose: 5, unit: "ml", timestamp: Date.now() - 2 * 3600000, type: "dose" },
-  { id: "l2", profileId: "1", medicationName: "Weight Check", timestamp: Date.now() - 2.5 * 3600000, type: "weight", value: 14.2 },
+  { id: "l2", profileId: "1", medicationName: "Verificação de Peso", timestamp: Date.now() - 2.5 * 3600000, type: "weight", value: 14.2 },
   { id: "l3", profileId: "1", medicationId: "m1", medicationName: "Amoxicillin", dose: 5, unit: "ml", timestamp: Date.now() - 26 * 3600000, type: "dose" },
-  { id: "l4", profileId: "1", medicationName: "Temperature", timestamp: Date.now() - 26.5 * 3600000, type: "temperature", value: 38.5 },
-  { id: "l5", profileId: "1", medicationName: "Doctor Note", timestamp: Date.now() - 38 * 3600000, type: "note", note: "Drink plenty of water" },
+  { id: "l4", profileId: "1", medicationName: "Temperatura", timestamp: Date.now() - 26.5 * 3600000, type: "temperature", value: 38.5 },
+  { id: "l5", profileId: "1", medicationName: "Nota do Médico", timestamp: Date.now() - 38 * 3600000, type: "note", note: "Beba bastante água" },
 ];
 
 export function AppProvider({ children }: { children: ReactNode }) {

@@ -48,7 +48,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: "Home",
+          title: "Início",
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="home" size={size} color={color} />
           ),
@@ -57,7 +57,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="cabinet"
         options={{
-          title: "Cabinet",
+          title: "Armário",
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="medical" size={size} color={color} />
           ),
@@ -66,7 +66,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="history"
         options={{
-          title: "History",
+          title: "Histórico",
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="time" size={size} color={color} />
           ),

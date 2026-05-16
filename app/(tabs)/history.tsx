@@ -15,17 +15,17 @@ import { useApp, DoseLog } from "@/contexts/AppContext";
 import Colors from "@/constants/colors";
 
 function formatTime(ts: number): string {
-  return new Date(ts).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true });
+  return new Date(ts).toLocaleTimeString("pt-BR", { hour: "numeric", minute: "2-digit", hour12: false });
 }
 
 function getDateGroup(ts: number): string {
   const now = new Date();
   const date = new Date(ts);
   const diffDays = Math.floor((now.setHours(0, 0, 0, 0) - date.setHours(0, 0, 0, 0)) / 86400000);
-  if (diffDays === 0) return "Today";
-  if (diffDays === 1) return "Yesterday";
-  if (diffDays < 7) return date.toLocaleDateString("en-US", { weekday: "long" });
-  return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+  if (diffDays === 0) return "Hoje";
+  if (diffDays === 1) return "Ontem";
+  if (diffDays < 7) return date.toLocaleDateString("pt-BR", { weekday: "long" });
+  return date.toLocaleDateString("pt-BR", { month: "short", day: "numeric" });
 }
 
 function LogIcon({ type, isDark }: { type: string; isDark: boolean }) {
@@ -62,9 +62,9 @@ function LogCard({ log, isDark }: { log: DoseLog; isDark: boolean }) {
 
   const subtitle = useMemo(() => {
     if (log.type === "dose") return `${log.dose}${log.unit} • ${log.medicationName}`;
-    if (log.type === "weight") return `${log.value}kg • Weight`;
-    if (log.type === "temperature") return `${log.value}°C • Temperature`;
-    if (log.type === "note") return log.note ?? "Note";
+    if (log.type === "weight") return `${log.value}kg • Peso`;
+    if (log.type === "temperature") return `${log.value}°C • Temperatura`;
+    if (log.type === "note") return log.note ?? "Nota";
     return "";
   }, [log]);
 
@@ -135,7 +135,7 @@ export default function HistoryScreen() {
       {/* Header */}
       <View style={[styles.header, { paddingTop: topPad + 16, backgroundColor: C.background }]}>
         <View style={styles.headerTop}>
-          <Text style={[styles.headerTitle, { color: C.text }]}>History Log</Text>
+          <Text style={[styles.headerTitle, { color: C.text }]}>Histórico</Text>
           <Pressable style={[styles.filterBtn, { backgroundColor: isDark ? Colors.surfaceDark : Colors.surfaceLight, borderColor: C.border }]}>
             <Ionicons name="filter" size={18} color={C.textMuted} />
           </Pressable>
@@ -160,7 +160,7 @@ export default function HistoryScreen() {
               setFilterProfileId(null);
             }}
           >
-            <Text style={[styles.filterChipText, { color: !filterProfileId ? Colors.primaryContent : C.textMuted }]}>All</Text>
+            <Text style={[styles.filterChipText, { color: !filterProfileId ? Colors.primaryContent : C.textMuted }]}>Todos</Text>
           </Pressable>
           {profiles.map((p) => (
             <Pressable
@@ -194,8 +194,8 @@ export default function HistoryScreen() {
             <View style={[styles.emptyIcon, { backgroundColor: isDark ? Colors.surfaceDark : Colors.mintSoft }]}>
               <Ionicons name="time-outline" size={40} color={Colors.gentleSage} />
             </View>
-            <Text style={[styles.emptyTitle, { color: C.text }]}>No logs yet</Text>
-            <Text style={[styles.emptySubtitle, { color: C.textMuted }]}>Dose logs will appear here after you start tracking</Text>
+            <Text style={[styles.emptyTitle, { color: C.text }]}>Nenhum registro ainda</Text>
+            <Text style={[styles.emptySubtitle, { color: C.textMuted }]}>Os registros de doses aparecerão aqui após você começar a rastrear</Text>
           </View>
         ) : (
           grouped.map((group) => (
@@ -212,7 +212,7 @@ export default function HistoryScreen() {
 
         {grouped.length > 0 && (
           <Text style={[styles.endText, { color: isDark ? Colors.borderDark : Colors.border }]}>
-            End of history for this week
+            Fim do histórico desta semana
           </Text>
         )}
       </ScrollView>
@@ -233,7 +233,7 @@ export default function HistoryScreen() {
           }}
         >
           <Ionicons name="share" size={18} color={isDark ? Colors.textMain : "#fff"} />
-          <Text style={[styles.shareBtnText, { color: isDark ? Colors.textMain : "#fff" }]}>Share with Doctor</Text>
+          <Text style={[styles.shareBtnText, { color: isDark ? Colors.textMain : "#fff" }]}>Compartilhar com Médico</Text>
         </Pressable>
       </View>
     </View>

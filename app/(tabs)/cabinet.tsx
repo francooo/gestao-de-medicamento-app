@@ -52,7 +52,7 @@ function MedCard({ med, isDark, onLog, onInfo, onDelete }: {
         <View style={styles.medInfo}>
           <Text style={[styles.medName, { color: C.text }]}>{med.name}</Text>
           <Text style={[styles.medDetails, { color: C.textMuted }]}>
-            {med.strength}{med.unit} • Every {med.intervalHours}h
+            {med.strength}{med.unit} • A cada {med.intervalHours}h
           </Text>
           {med.notes ? (
             <Text style={[styles.medNotes, { color: C.textMuted }]} numberOfLines={1}>
@@ -69,7 +69,7 @@ function MedCard({ med, isDark, onLog, onInfo, onDelete }: {
             onPress={onLog}
           >
             <Ionicons name="add-circle" size={18} color={Colors.primaryContent} />
-            <Text style={styles.logBtnText}>Log</Text>
+            <Text style={styles.logBtnText}>Registrar</Text>
           </Pressable>
           <Pressable style={styles.deleteBtn} onPress={onDelete}>
             <Ionicons name="trash-outline" size={18} color={Colors.gentleRose} />
@@ -93,10 +93,10 @@ export default function CabinetScreen() {
   const meds = selectedProfile ? getMedicationsForProfile(selectedProfile.id) : [];
 
   function handleDelete(id: string, name: string) {
-    Alert.alert(`Remove ${name}?`, "This will remove the medication from the cabinet.", [
-      { text: "Cancel", style: "cancel" },
+    Alert.alert(`Remover ${name}?`, "Isso removerá o medicamento do armário.", [
+      { text: "Cancelar", style: "cancel" },
       {
-        text: "Remove",
+        text: "Remover",
         style: "destructive",
         onPress: async () => {
           await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
@@ -110,7 +110,7 @@ export default function CabinetScreen() {
     <View style={[styles.container, { backgroundColor: C.background }]}>
       {/* Header */}
       <View style={[styles.header, { paddingTop: topPad + 16, backgroundColor: C.background }]}>
-        <Text style={[styles.headerTitle, { color: C.text }]}>Medicine Cabinet</Text>
+        <Text style={[styles.headerTitle, { color: C.text }]}>Armário de Remédios</Text>
         <Pressable
           style={({ pressed }) => [
             styles.addBtn,
@@ -122,7 +122,7 @@ export default function CabinetScreen() {
           }}
         >
           <Ionicons name="add" size={18} color={Colors.primaryContent} />
-          <Text style={styles.addBtnText}>Add</Text>
+          <Text style={styles.addBtnText}>Adicionar</Text>
         </Pressable>
       </View>
 
@@ -131,7 +131,7 @@ export default function CabinetScreen() {
         <View style={[styles.profileBanner, { backgroundColor: isDark ? Colors.surfaceDark : Colors.mintSoft, borderColor: Colors.primary + "20" }]}>
           <Ionicons name="person" size={16} color={Colors.primary} />
           <Text style={[styles.profileBannerText, { color: C.text }]}>
-            Showing meds for{" "}
+            Remédios de{" "}
             <Text style={{ fontFamily: "Inter_700Bold", color: Colors.primary }}>{selectedProfile.name}</Text>{" "}
             <Text style={{ color: C.textMuted, fontSize: 12 }}>({selectedProfile.weight}kg)</Text>
           </Text>
@@ -150,19 +150,19 @@ export default function CabinetScreen() {
             <View style={[styles.emptyIcon, { backgroundColor: isDark ? Colors.surfaceDark : Colors.mintSoft }]}>
               <Ionicons name="medkit-outline" size={40} color={Colors.gentleSage} />
             </View>
-            <Text style={[styles.emptyTitle, { color: C.text }]}>Cabinet is empty</Text>
-            <Text style={[styles.emptySubtitle, { color: C.textMuted }]}>Add medications to track doses and get reminders</Text>
+            <Text style={[styles.emptyTitle, { color: C.text }]}>Armário vazio</Text>
+            <Text style={[styles.emptySubtitle, { color: C.textMuted }]}>Adicione medicamentos para rastrear doses e receber lembretes</Text>
             <Pressable
               style={({ pressed }) => [styles.emptyBtn, { opacity: pressed ? 0.85 : 1 }]}
               onPress={() => router.push("/add-medication")}
             >
-              <Text style={styles.emptyBtnText}>Add First Medication</Text>
+              <Text style={styles.emptyBtnText}>Adicionar Primeiro Medicamento</Text>
             </Pressable>
           </View>
         ) : (
           <>
             <Text style={[styles.sectionLabel, { color: Colors.gentleLavender }]}>
-              {meds.length} MEDICATION{meds.length !== 1 ? "S" : ""}
+              {meds.length} MEDICAMENTO{meds.length !== 1 ? "S" : ""}
             </Text>
             {meds.map((med) => (
               <MedCard

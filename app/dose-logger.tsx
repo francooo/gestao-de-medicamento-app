@@ -17,10 +17,10 @@ import { useApp } from "@/contexts/AppContext";
 import Colors from "@/constants/colors";
 
 const TIME_OPTIONS = [
-  { label: "Just now", offset: 0 },
-  { label: "15m ago", offset: 15 },
-  { label: "30m ago", offset: 30 },
-  { label: "1h ago", offset: 60 },
+  { label: "Agora", offset: 0 },
+  { label: "15min atrás", offset: 15 },
+  { label: "30min atrás", offset: 30 },
+  { label: "1h atrás", offset: 60 },
 ];
 
 export default function DoseLoggerScreen() {
@@ -89,7 +89,7 @@ export default function DoseLoggerScreen() {
   if (!med) {
     return (
       <View style={[styles.container, { backgroundColor: C.background }]}>
-        <Text style={[styles.errorText, { color: C.text }]}>Medication not found</Text>
+        <Text style={[styles.errorText, { color: C.text }]}>Medicamento não encontrado</Text>
       </View>
     );
   }
@@ -101,7 +101,7 @@ export default function DoseLoggerScreen() {
         <Pressable style={styles.closeBtn} onPress={() => router.back()}>
           <Ionicons name="close" size={24} color={C.text} />
         </Pressable>
-        <Text style={[styles.headerTitle, { color: C.text }]}>Log Dose</Text>
+        <Text style={[styles.headerTitle, { color: C.text }]}>Registrar Dose</Text>
         <View style={{ width: 40 }} />
       </View>
 
@@ -119,20 +119,20 @@ export default function DoseLoggerScreen() {
             <Text style={[styles.medName, { color: C.text }]}>{med.name}</Text>
             <View style={styles.medForRow}>
               <Ionicons name="person" size={13} color={Colors.gentleSage} />
-              <Text style={[styles.medFor, { color: Colors.gentleSage }]}>For {selectedProfile?.name ?? "—"}</Text>
+              <Text style={[styles.medFor, { color: Colors.gentleSage }]}>Para {selectedProfile?.name ?? "—"}</Text>
             </View>
           </View>
           <Pressable
             style={[styles.editBtn, { backgroundColor: isDark ? Colors.surfaceDark : Colors.surfaceLight }]}
             onPress={() => router.back()}
           >
-            <Text style={[styles.editBtnText, { color: C.text }]}>Edit</Text>
+            <Text style={[styles.editBtnText, { color: C.text }]}>Editar</Text>
           </Pressable>
         </View>
 
         {/* Dosage Stepper */}
         <View style={styles.dosageSection}>
-          <Text style={[styles.sectionLabel, { color: C.textMuted }]}>HOW MUCH?</Text>
+          <Text style={[styles.sectionLabel, { color: C.textMuted }]}>QUANTO?</Text>
           <View style={styles.stepperRow}>
             <Pressable
               style={[styles.stepBtn, { backgroundColor: isDark ? Colors.backgroundDark : Colors.backgroundLight }]}
@@ -182,9 +182,9 @@ export default function DoseLoggerScreen() {
         {selectedProfile && (
           <View style={styles.weightSection}>
             <View style={styles.weightSectionHeader}>
-              <Text style={[styles.sectionLabel, { color: C.textMuted }]}>CURRENT WEIGHT</Text>
+              <Text style={[styles.sectionLabel, { color: C.textMuted }]}>PESO ATUAL</Text>
               <View style={[styles.verifiedBadge, { backgroundColor: Colors.primary + "18" }]}>
-                <Text style={[styles.verifiedBadgeText, { color: Colors.primaryDark }]}>Verified 2d ago</Text>
+                <Text style={[styles.verifiedBadgeText, { color: Colors.primaryDark }]}>Verificado há 2d</Text>
               </View>
             </View>
             <Pressable
@@ -200,7 +200,7 @@ export default function DoseLoggerScreen() {
                     {selectedProfile.weight} <Text style={[styles.weightUnit, { color: C.textMuted }]}>kg</Text>
                   </Text>
                   <Text style={[styles.safeRange, { color: C.textMuted }]}>
-                    Safe dose: {safeMin} - {safeMax}{selectedUnit}
+                    Dose segura: {safeMin} - {safeMax}{selectedUnit}
                   </Text>
                 </View>
               </View>
@@ -208,7 +208,7 @@ export default function DoseLoggerScreen() {
                 style={[styles.confirmBtn, { backgroundColor: isDark ? Colors.surfaceDark : Colors.surfaceLight }]}
                 onPress={() => router.push({ pathname: "/weight-check", params: { profileId: selectedProfile.id } })}
               >
-                <Text style={[styles.confirmBtnText, { color: C.text }]}>Update</Text>
+                <Text style={[styles.confirmBtnText, { color: C.text }]}>Atualizar</Text>
               </Pressable>
             </Pressable>
           </View>
@@ -216,7 +216,7 @@ export default function DoseLoggerScreen() {
 
         {/* Time Picker */}
         <View style={styles.timeSection}>
-          <Text style={[styles.sectionLabel, { color: C.textMuted }]}>TIME GIVEN</Text>
+          <Text style={[styles.sectionLabel, { color: C.textMuted }]}>HORÁRIO DADO</Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.timeScroll}>
             {TIME_OPTIONS.map((opt, idx) => (
               <Pressable
@@ -270,10 +270,10 @@ export default function DoseLoggerScreen() {
           onPress={handleSave}
         >
           <Ionicons name="checkmark-circle" size={22} color={Colors.primaryContent} />
-          <Text style={styles.saveBtnText}>Save Log</Text>
+          <Text style={styles.saveBtnText}>Salvar Registro</Text>
         </Pressable>
         <Text style={[styles.nextDoseText, { color: C.textMuted }]}>
-          Next dose in {med.intervalHours} hours
+          Próxima dose em {med.intervalHours} horas
         </Text>
       </View>
     </View>

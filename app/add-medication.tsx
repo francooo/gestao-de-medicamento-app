@@ -20,9 +20,9 @@ type MedType = "liquid" | "tablet" | "other";
 type MedUnit = "ml" | "mg" | "drops" | "mcg" | "units";
 
 const TYPE_OPTIONS: { value: MedType; label: string; icon: string }[] = [
-  { value: "liquid", label: "Liquid", icon: "water" },
-  { value: "tablet", label: "Tablet", icon: "ellipse" },
-  { value: "other", label: "Other", icon: "bandage" },
+  { value: "liquid", label: "Líquido", icon: "water" },
+  { value: "tablet", label: "Comprimido", icon: "ellipse" },
+  { value: "other", label: "Outro", icon: "bandage" },
 ];
 
 const UNIT_OPTIONS: MedUnit[] = ["ml", "mg", "drops", "mcg", "units"];
@@ -147,15 +147,15 @@ export default function AddMedicationScreen() {
           style={styles.cancelBtn}
           onPress={() => router.back()}
         >
-          <Text style={[styles.cancelText, { color: C.textMuted }]}>Cancel</Text>
+          <Text style={[styles.cancelText, { color: C.textMuted }]}>Cancelar</Text>
         </Pressable>
-        <Text style={[styles.headerTitle, { color: C.text }]}>Add Medication</Text>
+        <Text style={[styles.headerTitle, { color: C.text }]}>Adicionar Medicamento</Text>
         <Pressable
           style={[styles.saveBtn, { backgroundColor: canSave ? Colors.primary : Colors.primary + "50" }]}
           onPress={handleSave}
           disabled={!canSave}
         >
-          <Text style={styles.saveBtnText}>Save</Text>
+          <Text style={styles.saveBtnText}>Salvar</Text>
         </Pressable>
       </View>
 
@@ -169,7 +169,7 @@ export default function AddMedicationScreen() {
           <View style={[styles.profileBanner, { backgroundColor: isDark ? Colors.surfaceDark : Colors.mintSoft, borderColor: Colors.primary + "20" }]}>
             <Ionicons name="person" size={16} color={Colors.primary} />
             <Text style={[styles.profileBannerText, { color: C.text }]}>
-              Adding for{" "}
+              Adicionando para{" "}
               <Text style={{ fontFamily: "Inter_700Bold", color: Colors.primary }}>{selectedProfile.name}</Text>{" "}
               <Text style={{ color: C.textMuted, fontSize: 12 }}>({selectedProfile.weight}kg)</Text>
             </Text>
@@ -191,12 +191,12 @@ export default function AddMedicationScreen() {
           <View style={[styles.scanIconCircle, { backgroundColor: isDark ? Colors.surfaceDark : Colors.surfaceLight }]}>
             <Ionicons name="camera" size={30} color={Colors.primary} />
           </View>
-          <Text style={[styles.scanTitle, { color: C.text }]}>Scan Label</Text>
+          <Text style={[styles.scanTitle, { color: C.text }]}>Escanear Rótulo</Text>
           <Text style={[styles.scanSubtitle, { color: Colors.gentleSage }]}>
-            Snap a photo of the box to auto-fill details instantly.
+            Tire uma foto da caixa para preencher os dados automaticamente.
           </Text>
           <View style={[styles.aiBadge, { backgroundColor: Colors.primary + "18" }]}>
-            <Text style={[styles.aiBadgeText, { color: Colors.primaryDark }]}>AI ENABLED</Text>
+            <Text style={[styles.aiBadgeText, { color: Colors.primaryDark }]}>IA ATIVADA</Text>
           </View>
         </Pressable>
 
@@ -204,17 +204,17 @@ export default function AddMedicationScreen() {
         <View style={styles.form}>
           {/* Name */}
           <InputField
-            label="Medicine Name"
+            label="Nome do Medicamento"
             icon="medical"
             value={name}
             onChangeText={setName}
-            placeholder="e.g. Ibuprofen"
+            placeholder="ex.: Ibuprofeno"
             isDark={isDark}
           />
 
           {/* Type Toggle */}
           <View style={styles.typeSection}>
-            <Text style={[styles.typeLabel, { color: Colors.gentleSage }]}>TYPE</Text>
+            <Text style={[styles.typeLabel, { color: Colors.gentleSage }]}>TIPO</Text>
             <View style={[styles.typeToggle, { backgroundColor: isDark ? Colors.surfaceDark : Colors.surfaceLight }]}>
               {TYPE_OPTIONS.map((opt) => (
                 <Pressable
@@ -249,7 +249,7 @@ export default function AddMedicationScreen() {
           {/* Strength */}
           <View style={styles.strengthRow}>
             <View style={[inputStyles.wrapper, { flex: 1 }]}>
-              <Text style={[inputStyles.label, { color: Colors.gentleSage }]}>STRENGTH</Text>
+              <Text style={[inputStyles.label, { color: Colors.gentleSage }]}>CONCENTRAÇÃO</Text>
               <View
                 style={[
                   inputStyles.container,
@@ -265,7 +265,7 @@ export default function AddMedicationScreen() {
                   style={[inputStyles.input, { color: C.text }]}
                   value={strength}
                   onChangeText={setStrength}
-                  placeholder="e.g. 100"
+                  placeholder="ex.: 100"
                   placeholderTextColor={Colors.gentleSage + "88"}
                   keyboardType="decimal-pad"
                 />
@@ -273,7 +273,7 @@ export default function AddMedicationScreen() {
             </View>
 
             <View style={styles.unitPicker}>
-              <Text style={[inputStyles.label, { color: Colors.gentleSage }]}>UNIT</Text>
+              <Text style={[inputStyles.label, { color: Colors.gentleSage }]}>UNIDADE</Text>
               <ScrollView
                 horizontal
                 showsHorizontalScrollIndicator={false}
@@ -311,7 +311,7 @@ export default function AddMedicationScreen() {
           {/* Interval */}
           <View style={styles.twoCol}>
             <View style={[inputStyles.wrapper, { flex: 1 }]}>
-              <Text style={[inputStyles.label, { color: Colors.gentleSage }]}>INTERVAL (HOURS)</Text>
+              <Text style={[inputStyles.label, { color: Colors.gentleSage }]}>INTERVALO (HORAS)</Text>
               <View
                 style={[
                   inputStyles.container,
@@ -334,7 +334,7 @@ export default function AddMedicationScreen() {
               </View>
             </View>
             <View style={[inputStyles.wrapper, { flex: 1 }]}>
-              <Text style={[inputStyles.label, { color: Colors.gentleSage }]}>DURATION (DAYS)</Text>
+              <Text style={[inputStyles.label, { color: Colors.gentleSage }]}>DURAÇÃO (DIAS)</Text>
               <View
                 style={[
                   inputStyles.container,
@@ -360,7 +360,7 @@ export default function AddMedicationScreen() {
 
           {/* Notes */}
           <View style={inputStyles.wrapper}>
-            <Text style={[inputStyles.label, { color: Colors.gentleSage }]}>INSTRUCTIONS / NOTES</Text>
+            <Text style={[inputStyles.label, { color: Colors.gentleSage }]}>INSTRUÇÕES / OBSERVAÇÕES</Text>
             <View
               style={[
                 styles.notesContainer,
@@ -374,7 +374,7 @@ export default function AddMedicationScreen() {
                 style={[styles.notesInput, { color: C.text }]}
                 value={notes}
                 onChangeText={setNotes}
-                placeholder="Take with food, keep refrigerated..."
+                placeholder="Tomar com alimento, manter refrigerado..."
                 placeholderTextColor={Colors.gentleSage + "88"}
                 multiline
                 numberOfLines={3}

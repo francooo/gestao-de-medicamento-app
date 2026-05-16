@@ -69,27 +69,27 @@ export default function SafetyCheckScreen() {
 
         {/* Content */}
         <View style={styles.textArea}>
-          <Text style={[styles.title, { color: C.text }]}>Just a moment</Text>
+          <Text style={[styles.title, { color: C.text }]}>Só um momento</Text>
 
           <View style={[styles.infoBox, { backgroundColor: isDark ? Colors.backgroundDark : Colors.surfaceLight, borderColor: isDark ? Colors.borderDark : "#f1f5f4" }]}>
             <Text style={[styles.infoText, { color: C.text }]}>
-              You logged <Text style={[styles.infoStrong, { color: C.text }]}>{med?.name ?? "this medication"}</Text> less than{" "}
-              <Text style={[styles.infoStrong, { color: C.text }]}>{med?.intervalHours ?? 6} hours</Text> ago.
+              Você registrou <Text style={[styles.infoStrong, { color: C.text }]}>{med?.name ?? "este medicamento"}</Text> há menos de{" "}
+              <Text style={[styles.infoStrong, { color: C.text }]}>{med?.intervalHours ?? 6} horas</Text>.
             </Text>
             <View style={styles.warningRow}>
               <Ionicons name="information-circle" size={18} color={Colors.gentleRose} />
               <Text style={[styles.warningText, { color: C.textMuted }]}>
-                This medication requires a{" "}
+                Este medicamento requer um intervalo de{" "}
                 <Text style={{ fontFamily: "Inter_700Bold", color: Colors.gentleRose }}>
-                  {med?.intervalHours ?? 6}-hour gap
+                  {med?.intervalHours ?? 6} horas
                 </Text>{" "}
-                between doses to be safe.
+                entre doses para ser seguro.
               </Text>
             </View>
           </View>
 
           <Text style={[styles.questionText, { color: C.textMuted }]}>
-            Are you sure you want to proceed?
+            Tem certeza de que deseja continuar?
           </Text>
         </View>
 
@@ -103,14 +103,14 @@ export default function SafetyCheckScreen() {
             onPress={handleCancel}
           >
             <Ionicons name="close-circle" size={20} color={Colors.primaryContent} />
-            <Text style={styles.cancelBtnText}>Cancel &amp; Wait</Text>
+            <Text style={styles.cancelBtnText}>Cancelar e Aguardar</Text>
           </Pressable>
 
           <Pressable
             style={({ pressed }) => [styles.logAnywayBtn, { opacity: pressed ? 0.9 : 1 }]}
             onPress={handleLogAnyway}
           >
-            <Text style={[styles.logAnywayText, { color: C.textMuted }]}>Log Anyway</Text>
+            <Text style={[styles.logAnywayText, { color: C.textMuted }]}>Registrar Mesmo Assim</Text>
           </Pressable>
         </View>
 

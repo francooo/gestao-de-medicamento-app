@@ -107,12 +107,12 @@ export default function DashboardScreen() {
   }, [profileMeds, nextDueMed]);
 
   const weightVerifiedText = useMemo(() => {
-    if (!selectedProfile?.weightVerifiedAt) return "Not verified";
+    if (!selectedProfile?.weightVerifiedAt) return "Não verificado";
     const diff = Date.now() - selectedProfile.weightVerifiedAt;
     const days = Math.floor(diff / 86400000);
-    if (days === 0) return "Verified today";
-    if (days === 1) return "Verified yesterday";
-    return `Verified ${days}d ago`;
+    if (days === 0) return "Verificado hoje";
+    if (days === 1) return "Verificado ontem";
+    return `Verificado há ${days}d`;
   }, [selectedProfile]);
 
   async function handleLogNow(medId: string) {
@@ -126,15 +126,15 @@ export default function DashboardScreen() {
   }
 
   const hour = new Date().getHours();
-  const greeting = hour < 12 ? "Good Morning" : hour < 17 ? "Good Afternoon" : "Good Evening";
-  const today = new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", weekday: "long" });
+  const greeting = hour < 12 ? "Bom Dia" : hour < 17 ? "Boa Tarde" : "Boa Noite";
+  const today = new Date().toLocaleDateString("pt-BR", { month: "short", day: "numeric", weekday: "long" });
 
   return (
     <View style={[styles.container, { backgroundColor: C.background }]}>
       {/* Header */}
       <View style={[styles.header, { paddingTop: topPad + 16, backgroundColor: C.background }]}>
         <View>
-          <Text style={[styles.greeting, { color: C.text }]}>{greeting}, Sarah</Text>
+          <Text style={[styles.greeting, { color: C.text }]}>{greeting}, Sara</Text>
           <Text style={[styles.dateText, { color: Colors.gentleLavender }]}>{today.toUpperCase()}</Text>
         </View>
         <Pressable style={styles.notifButton} onPress={() => {}}>
@@ -179,7 +179,7 @@ export default function DashboardScreen() {
           <View style={[styles.addProfileBtn, { borderColor: Colors.gentleLavender, backgroundColor: isDark ? Colors.surfaceDark : Colors.lavenderLight }]}>
             <Ionicons name="add" size={24} color={Colors.gentleLavender} />
           </View>
-          <Text style={[styles.profileName, { color: C.textMuted }]}>Add</Text>
+          <Text style={[styles.profileName, { color: C.textMuted }]}>Adicionar</Text>
         </Pressable>
       </ScrollView>
 
@@ -205,14 +205,14 @@ export default function DashboardScreen() {
                   <View>
                     <Text style={[styles.medName, { color: C.text }]}>{nextDueMed.med.name}</Text>
                     <Text style={[styles.medSubtitle, { color: C.textMuted }]}>
-                      {nextDueMed.med.strength}{nextDueMed.med.unit} • {nextDueMed.med.type === "liquid" ? "Liquid" : nextDueMed.med.type === "tablet" ? "Tablet" : "Other"}
+                      {nextDueMed.med.strength}{nextDueMed.med.unit} • {nextDueMed.med.type === "liquid" ? "Líquido" : nextDueMed.med.type === "tablet" ? "Comprimido" : "Outro"}
                     </Text>
                   </View>
                 </View>
                 <View style={[styles.dueBadge, { backgroundColor: Colors.roseLight }]}>
                   <Ionicons name="time" size={13} color={Colors.gentleRose} />
                   <Text style={[styles.dueBadgeText, { color: Colors.gentleRose }]}>
-                    {nextDueMed.isDue ? "Due Now" : `In ${Math.ceil(nextDueMed.hoursUntilDue)}h`}
+                    {nextDueMed.isDue ? "Agora" : `Em ${Math.ceil(nextDueMed.hoursUntilDue)}h`}
                   </Text>
                 </View>
               </View>
@@ -225,7 +225,7 @@ export default function DashboardScreen() {
                   onPress={() => handleLogNow(nextDueMed.med.id)}
                 >
                   <Ionicons name="checkmark" size={18} color={Colors.primaryContent} />
-                  <Text style={styles.logNowText}>Log Now</Text>
+                  <Text style={styles.logNowText}>Registrar</Text>
                 </Pressable>
               </View>
             </View>
@@ -238,7 +238,7 @@ export default function DashboardScreen() {
           <View style={[styles.widget, { backgroundColor: C.surface }]}>
             <View style={styles.widgetHeader}>
               <View>
-                <Text style={[styles.widgetLabel, { color: Colors.gentleLavender }]}>WEIGHT</Text>
+                <Text style={[styles.widgetLabel, { color: Colors.gentleLavender }]}>PESO</Text>
                 <Text style={[styles.widgetValue, { color: C.text }]}>
                   {selectedProfile?.weight ?? "—"}{" "}
                   <Text style={[styles.widgetUnit, { color: C.textMuted }]}>kg</Text>
@@ -258,13 +258,13 @@ export default function DashboardScreen() {
           <View style={[styles.widget, { backgroundColor: C.surface }]}>
             <View style={styles.widgetHeader}>
               <View>
-                <Text style={[styles.widgetLabel, { color: Colors.gentleLavender }]}>UPCOMING</Text>
+                <Text style={[styles.widgetLabel, { color: Colors.gentleLavender }]}>PRÓXIMO</Text>
                 <Text style={[styles.widgetValue, { color: C.text }]} numberOfLines={1}>
-                  {upcomingMed?.name ?? "None"}
+                  {upcomingMed?.name ?? "Nenhum"}
                 </Text>
                 {upcomingMed && (
                   <Text style={[styles.widgetSubValue, { color: C.textMuted }]}>
-                    {upcomingMed.type === "tablet" ? "Tablet" : "Liquid"} • {upcomingMed.strength}{upcomingMed.unit}
+                    {upcomingMed.type === "tablet" ? "Comprimido" : "Líquido"} • {upcomingMed.strength}{upcomingMed.unit}
                   </Text>
                 )}
               </View>
@@ -275,7 +275,7 @@ export default function DashboardScreen() {
             {upcomingMed && (
               <View style={[styles.upcomingTime, { marginTop: "auto" }]}>
                 <Ionicons name="time-outline" size={14} color={C.textMuted} />
-                <Text style={[styles.upcomingTimeText, { color: C.textMuted }]}>Every {upcomingMed.intervalHours}h</Text>
+                <Text style={[styles.upcomingTimeText, { color: C.textMuted }]}>A cada {upcomingMed.intervalHours}h</Text>
               </View>
             )}
           </View>
@@ -283,7 +283,7 @@ export default function DashboardScreen() {
 
         {/* Yesterday Summary */}
         <View style={styles.sectionHeader}>
-          <Text style={[styles.sectionLabel, { color: Colors.gentleLavender }]}>YESTERDAY</Text>
+          <Text style={[styles.sectionLabel, { color: Colors.gentleLavender }]}>ONTEM</Text>
         </View>
         <Pressable
           style={({ pressed }) => [
@@ -299,8 +299,8 @@ export default function DashboardScreen() {
             <Ionicons name="checkmark-circle" size={22} color="#2da870" />
           </View>
           <View>
-            <Text style={[styles.summaryTitle, { color: C.text }]}>All Doses Logged</Text>
-            <Text style={[styles.summarySubtitle, { color: C.textMuted }]}>{selectedProfile?.name ?? "—"} had a good day</Text>
+            <Text style={[styles.summaryTitle, { color: C.text }]}>Todas as Doses Registradas</Text>
+            <Text style={[styles.summarySubtitle, { color: C.textMuted }]}>{selectedProfile?.name ?? "—"} teve um bom dia</Text>
           </View>
           <Ionicons name="chevron-forward" size={18} color={Colors.gentleLavender} style={{ marginLeft: "auto" }} />
         </Pressable>

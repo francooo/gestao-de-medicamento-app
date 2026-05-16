@@ -62,9 +62,9 @@ export default function WeightCheckScreen() {
 
         {/* Heading */}
         <View style={styles.heading}>
-          <Text style={[styles.title, { color: C.text }]}>Let's be precise</Text>
+          <Text style={[styles.title, { color: C.text }]}>Vamos ser precisos</Text>
           <Text style={[styles.subtitle, { color: C.textMuted }]}>
-            What is {profile?.name ?? "the patient"}'s current weight?
+            Qual é o peso atual de {profile?.name ?? "o paciente"}?
           </Text>
         </View>
 
@@ -104,7 +104,7 @@ export default function WeightCheckScreen() {
           <View style={[styles.lastLogged, { backgroundColor: Colors.primary + "14" }]}>
             <Ionicons name="time" size={14} color={Colors.primary} />
             <Text style={[styles.lastLoggedText, { color: C.textMuted }]}>
-              Last logged: {profile?.weight}kg (2 weeks ago)
+              Último registro: {profile?.weight}kg (há 2 semanas)
             </Text>
           </View>
         </View>
@@ -113,7 +113,7 @@ export default function WeightCheckScreen() {
         <View style={styles.disclaimer}>
           <Ionicons name="information-circle" size={18} color="#ef4444" />
           <Text style={styles.disclaimerText}>
-            Safety first: Dosage will be strictly calculated based on this value. Please verify it's current.
+            Segurança em primeiro lugar: A dosagem será calculada com base nesse valor. Por favor, confirme se está correto.
           </Text>
         </View>
 
@@ -125,7 +125,7 @@ export default function WeightCheckScreen() {
           ]}
           onPress={handleConfirm}
         >
-          <Text style={styles.ctaBtnText}>Calculate Safe Dose</Text>
+          <Text style={styles.ctaBtnText}>Calcular Dose Segura</Text>
           <Ionicons name="arrow-forward" size={20} color={Colors.primaryContent} />
         </Pressable>
       </View>

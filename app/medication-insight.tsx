@@ -16,12 +16,12 @@ import Colors from "@/constants/colors";
 
 const WATCH_OUTS: Record<string, { icon: string; title: string; desc: string }[]> = {
   Amoxicillin: [
-    { icon: "restaurant", title: "Take with food", desc: "To avoid tummy aches, it's best to give this dose right after a meal or snack." },
-    { icon: "bed", title: "May cause drowsiness", desc: "The patient might be a bit sleepier than usual. Monitor during activity." },
+    { icon: "restaurant", title: "Tomar com alimento", desc: "Para evitar dores de barriga, é melhor dar esta dose logo após uma refeição ou lanche." },
+    { icon: "bed", title: "Pode causar sonolência", desc: "O paciente pode ficar um pouco mais sonolento que o normal. Monitore durante atividades." },
   ],
   Ibuprofen: [
-    { icon: "restaurant", title: "Avoid empty stomach", desc: "Always give after a meal or with a glass of milk to protect the stomach." },
-    { icon: "timer", title: "Strict interval required", desc: "Never give more frequently than the recommended interval to avoid overdose." },
+    { icon: "restaurant", title: "Evitar estômago vazio", desc: "Sempre dar após uma refeição ou com um copo de leite para proteger o estômago." },
+    { icon: "timer", title: "Intervalo estrito obrigatório", desc: "Nunca dar com mais frequência do que o intervalo recomendado para evitar superdose." },
   ],
 };
 
@@ -43,7 +43,7 @@ export default function MedicationInsightScreen() {
   if (!med) {
     return (
       <View style={[styles.container, { backgroundColor: C.background }]}>
-        <Text style={[styles.errorText, { color: C.text }]}>Medication not found</Text>
+        <Text style={[styles.errorText, { color: C.text }]}>Medicamento não encontrado</Text>
       </View>
     );
   }
@@ -60,11 +60,11 @@ export default function MedicationInsightScreen() {
         <View>
           <View style={[styles.aiBadge, { backgroundColor: isDark ? "#3730a3" + "30" : "#e8e8f5" }]}>
             <Ionicons name="sparkles" size={14} color={isDark ? "#818cf8" : "#5a5a75"} />
-            <Text style={[styles.aiBadgeText, { color: isDark ? "#818cf8" : "#5a5a75" }]}>AI Summary</Text>
+            <Text style={[styles.aiBadgeText, { color: isDark ? "#818cf8" : "#5a5a75" }]}>Resumo IA</Text>
           </View>
           <Text style={[styles.medName, { color: C.text }]}>{med.name}</Text>
           <Text style={[styles.medSubtitle, { color: C.textMuted }]}>
-            {med.type === "liquid" ? "Oral Suspension" : med.type === "tablet" ? "Tablet" : "Other"} •{" "}
+            {med.type === "liquid" ? "Suspensão Oral" : med.type === "tablet" ? "Comprimido" : "Outro"} •{" "}
             {med.strength}{med.unit}
           </Text>
         </View>
@@ -85,7 +85,7 @@ export default function MedicationInsightScreen() {
           <View style={styles.dosageInner}>
             <View style={styles.dosageLabel}>
               <Ionicons name="calculator" size={18} color={Colors.primaryDark} />
-              <Text style={styles.dosageLabelText}>CALCULATED SAFE DOSE</Text>
+              <Text style={styles.dosageLabelText}>DOSE SEGURA CALCULADA</Text>
             </View>
 
             <View style={styles.dosageRange}>
@@ -103,8 +103,8 @@ export default function MedicationInsightScreen() {
                   <Ionicons name="time" size={20} color={Colors.primaryContent} />
                 </View>
                 <View>
-                  <Text style={styles.dosageMetaLabel}>FREQUENCY</Text>
-                  <Text style={styles.dosageMetaValue}>Every {med.intervalHours} hours</Text>
+                  <Text style={styles.dosageMetaLabel}>FREQUÊNCIA</Text>
+                  <Text style={styles.dosageMetaValue}>A cada {med.intervalHours} horas</Text>
                 </View>
               </View>
               <View style={styles.dosageMetaDivider} />
@@ -113,8 +113,8 @@ export default function MedicationInsightScreen() {
                   <Ionicons name="calendar" size={20} color={Colors.primaryContent} />
                 </View>
                 <View>
-                  <Text style={styles.dosageMetaLabel}>DURATION</Text>
-                  <Text style={styles.dosageMetaValue}>{med.durationDays} Days</Text>
+                  <Text style={styles.dosageMetaLabel}>DURAÇÃO</Text>
+                  <Text style={styles.dosageMetaValue}>{med.durationDays} Dias</Text>
                 </View>
               </View>
             </View>
@@ -126,7 +126,7 @@ export default function MedicationInsightScreen() {
           <View style={styles.watchSection}>
             <View style={styles.watchHeader}>
               <Ionicons name="warning" size={20} color="#c04d4d" />
-              <Text style={[styles.watchTitle, { color: C.text }]}>Watch Out</Text>
+              <Text style={[styles.watchTitle, { color: C.text }]}>Atenção</Text>
             </View>
             <View style={[styles.watchCard, { backgroundColor: "#fff0f0", borderColor: "#fecaca" }]}>
               {watchOuts.map((item, idx) => (
@@ -151,7 +151,7 @@ export default function MedicationInsightScreen() {
         {/* Leaflet */}
         <Pressable style={styles.leafletBtn}>
           <Ionicons name="document-text-outline" size={18} color={C.textMuted} />
-          <Text style={[styles.leafletText, { color: C.textMuted }]}>Read official leaflet (PDF)</Text>
+          <Text style={[styles.leafletText, { color: C.textMuted }]}>Ler bula oficial (PDF)</Text>
         </Pressable>
       </ScrollView>
 
@@ -172,7 +172,7 @@ export default function MedicationInsightScreen() {
           }}
         >
           <Ionicons name="checkmark-circle" size={22} color={isDark ? Colors.textMain : "#fff"} />
-          <Text style={[styles.gotItText, { color: isDark ? Colors.textMain : "#fff" }]}>Got it, Thanks</Text>
+          <Text style={[styles.gotItText, { color: isDark ? Colors.textMain : "#fff" }]}>Entendi, Obrigado</Text>
         </Pressable>
       </View>
     </View>

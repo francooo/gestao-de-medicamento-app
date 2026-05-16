@@ -78,7 +78,7 @@ export default function WelcomeScreen() {
             </View>
           </View>
           <Text style={[styles.title, { color: C.text }]}>Gentle Care</Text>
-          <Text style={[styles.subtitle, { color: C.textMuted }]}>Health tracking, simplified.</Text>
+          <Text style={[styles.subtitle, { color: C.textMuted }]}>Saúde da família, simplificada.</Text>
 
           <View style={styles.actions}>
             {/* Google button */}
@@ -97,13 +97,13 @@ export default function WelcomeScreen() {
               <View style={styles.googleLogoRow}>
                 <MaterialIcons name="language" size={20} color={Colors.primary} />
               </View>
-              <Text style={[styles.googleButtonText, { color: C.text }]}>Continue with Google</Text>
+              <Text style={[styles.googleButtonText, { color: C.text }]}>Continuar com Google</Text>
             </Pressable>
 
             {/* Divider */}
             <View style={styles.divider}>
               <View style={[styles.dividerLine, { backgroundColor: isDark ? "rgba(255,255,255,0.1)" : "#e2ece9" }]} />
-              <Text style={[styles.dividerText, { color: Colors.gentleSage }]}>Or login with email</Text>
+              <Text style={[styles.dividerText, { color: Colors.gentleSage }]}>Ou entre com e-mail</Text>
               <View style={[styles.dividerLine, { backgroundColor: isDark ? "rgba(255,255,255,0.1)" : "#e2ece9" }]} />
             </View>
 
@@ -126,7 +126,7 @@ export default function WelcomeScreen() {
               />
               <TextInput
                 style={[styles.input, { color: C.text }]}
-                placeholder="hello@email.com"
+                placeholder="seuemail@exemplo.com"
                 placeholderTextColor={Colors.gentleSage}
                 keyboardType="email-address"
                 autoCapitalize="none"
@@ -148,15 +148,15 @@ export default function WelcomeScreen() {
               ]}
               onPress={handleLogin}
             >
-              <Text style={styles.loginButtonText}>Step Inside</Text>
+              <Text style={styles.loginButtonText}>Entrar</Text>
               <Ionicons name="arrow-forward" size={20} color={Colors.primaryContent} />
             </Pressable>
 
             {/* Sign up link */}
             <View style={styles.signupRow}>
-              <Text style={[styles.signupText, { color: C.textMuted }]}>New here?</Text>
+              <Text style={[styles.signupText, { color: C.textMuted }]}>Novo por aqui?</Text>
               <Pressable onPress={handleLogin}>
-                <Text style={[styles.signupLink, { color: Colors.primaryDark }]}>Create an account</Text>
+                <Text style={[styles.signupLink, { color: Colors.primaryDark }]}>Criar uma conta</Text>
               </Pressable>
             </View>
           </View>
