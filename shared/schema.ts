@@ -37,6 +37,7 @@ export const medications = pgTable("medications", {
   notes: text("notes"),
   intervalHours: real("interval_hours").notNull().default(8),
   durationDays: integer("duration_days").notNull().default(7),
+  reminderLeadMinutes: integer("reminder_lead_minutes").notNull().default(0),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 

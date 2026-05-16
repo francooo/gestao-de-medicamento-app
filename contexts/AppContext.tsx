@@ -21,6 +21,7 @@ export interface Medication {
   notes?: string;
   intervalHours: number;
   durationDays: number;
+  reminderLeadMinutes: number;
 }
 
 export type LogType = "dose" | "weight" | "temperature" | "note";
@@ -96,6 +97,8 @@ interface RawMedication {
   interval_hours?: number;
   durationDays?: number;
   duration_days?: number;
+  reminderLeadMinutes?: number;
+  reminder_lead_minutes?: number;
 }
 
 interface RawDoseLog {
@@ -135,6 +138,7 @@ function mapMedication(raw: RawMedication): Medication {
     notes: raw.notes ?? undefined,
     intervalHours: raw.intervalHours ?? raw.interval_hours ?? 8,
     durationDays: raw.durationDays ?? raw.duration_days ?? 7,
+    reminderLeadMinutes: raw.reminderLeadMinutes ?? raw.reminder_lead_minutes ?? 0,
   };
 }
 
@@ -338,7 +342,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
           med.name,
           profile.name,
           med.intervalHours,
-          mapped.timestamp
+          mapped.timestamp,
+          med.reminderLeadMinutes
         );
       }
     }

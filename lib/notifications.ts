@@ -26,7 +26,8 @@ export async function scheduleNextDoseNotification(
   medicationName: string,
   profileName: string,
   intervalHours: number,
-  doseTimestamp: number
+  doseTimestamp: number,
+  reminderLeadMinutes: number = 0
 ): Promise<void> {
   if (Platform.OS === "web") return;
 
@@ -35,15 +36,27 @@ export async function scheduleNextDoseNotification(
   const { status } = await Notifications.getPermissionsAsync();
   if (status !== "granted") return;
 
-  const nextDoseTime = new Date(doseTimestamp + intervalHours * 3600000);
+  const nextDoseMs = doseTimestamp + intervalHours * 3600000;
+  const triggerMs = nextDoseMs - reminderLeadMinutes * 60000;
+  const triggerTime = new Date(triggerMs);
 
-  if (nextDoseTime.getTime() <= Date.now()) return;
+  if (triggerTime.getTime() <= Date.now()) return;
+
+  const leadLabel =
+    reminderLeadMinutes === 5
+      ? " em 5 minutos"
+      : reminderLeadMinutes === 15
+      ? " em 15 minutos"
+      : "";
 
   await Notifications.scheduleNotificationAsync({
     identifier: `dose-${medicationId}`,
     content: {
-      title: `Hora do ${medicationName}`,
-      body: `${profileName} precisa tomar ${medicationName} agora.`,
+      title: `Hora do ${medicationName}${leadLabel}`,
+      body:
+        reminderLeadMinutes > 0
+          ? `${profileName} precisará tomar ${medicationName} em ${reminderLeadMinutes} minutos.`
+          : `${profileName} precisa tomar ${medicationName} agora.`,
       data: {
         url: `/dose-logger?medicationId=${medicationId}`,
         medicationId,
@@ -52,7 +65,7 @@ export async function scheduleNextDoseNotification(
     },
     trigger: {
       type: Notifications.SchedulableTriggerInputTypes.DATE,
-      date: nextDoseTime,
+      date: triggerTime,
     },
   });
 }

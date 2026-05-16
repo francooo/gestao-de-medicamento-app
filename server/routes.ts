@@ -200,9 +200,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/medications", requireAuth, async (req: Request, res: Response) => {
     const { userId } = req as AuthenticatedRequest;
-    const { profileId, name, type, strength, unit, notes, intervalHours, durationDays } = req.body;
+    const { profileId, name, type, strength, unit, notes, intervalHours, durationDays, reminderLeadMinutes } = req.body;
     if (!profileId || !name) {
       res.status(400).json({ message: "profileId and name are required" });
+      return;
+    }
+    const ALLOWED_LEAD_MINUTES = [0, 5, 15];
+    const leadMinutes = reminderLeadMinutes ?? 0;
+    if (!ALLOWED_LEAD_MINUTES.includes(leadMinutes)) {
+      res.status(400).json({ message: "reminderLeadMinutes must be 0, 5, or 15" });
       return;
     }
     const ownsProfile = await verifyProfileOwnership(profileId, userId);
@@ -220,6 +226,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       notes: notes ?? null,
       intervalHours: intervalHours ?? 8,
       durationDays: durationDays ?? 7,
+      reminderLeadMinutes: leadMinutes,
     }).returning();
     res.status(201).json(med);
   });
@@ -227,10 +234,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.put("/api/medications/:id", requireAuth, async (req: Request, res: Response) => {
     const { userId } = req as AuthenticatedRequest;
     const { id } = req.params;
-    const { name, type, strength, unit, notes, intervalHours, durationDays } = req.body;
+    const { name, type, strength, unit, notes, intervalHours, durationDays, reminderLeadMinutes } = req.body;
+    if (reminderLeadMinutes !== undefined && ![0, 5, 15].includes(reminderLeadMinutes)) {
+      res.status(400).json({ message: "reminderLeadMinutes must be 0, 5, or 15" });
+      return;
+    }
     const [updated] = await db
       .update(medications)
-      .set({ name, type, strength, unit, notes, intervalHours, durationDays })
+      .set({ name, type, strength, unit, notes, intervalHours, durationDays, reminderLeadMinutes })
       .where(and(eq(medications.id, id), eq(medications.userId, userId)))
       .returning();
     if (!updated) {

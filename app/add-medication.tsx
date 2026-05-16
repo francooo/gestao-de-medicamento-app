@@ -18,6 +18,13 @@ import Colors from "@/constants/colors";
 
 type MedType = "liquid" | "tablet" | "other";
 type MedUnit = "ml" | "mg" | "drops" | "mcg" | "units";
+type ReminderLead = 0 | 5 | 15;
+
+const REMINDER_OPTIONS: { value: ReminderLead; label: string; icon: string }[] = [
+  { value: 0, label: "No horário", icon: "notifications" },
+  { value: 5, label: "5 min antes", icon: "time" },
+  { value: 15, label: "15 min antes", icon: "alarm" },
+];
 
 const TYPE_OPTIONS: { value: MedType; label: string; icon: string }[] = [
   { value: "liquid", label: "Líquido", icon: "water" },
@@ -120,6 +127,7 @@ export default function AddMedicationScreen() {
   const [notes, setNotes] = useState("");
   const [intervalHours, setIntervalHours] = useState("8");
   const [durationDays, setDurationDays] = useState("5");
+  const [reminderLead, setReminderLead] = useState<ReminderLead>(0);
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
 
@@ -140,6 +148,7 @@ export default function AddMedicationScreen() {
         notes: notes.trim() || undefined,
         intervalHours: parseInt(intervalHours) || 8,
         durationDays: parseInt(durationDays) || 5,
+        reminderLeadMinutes: reminderLead,
       });
       router.back();
     } catch (err) {
@@ -375,6 +384,40 @@ export default function AddMedicationScreen() {
             </View>
           </View>
 
+          {/* Reminder Lead Time */}
+          <View style={styles.typeSection}>
+            <Text style={[styles.typeLabel, { color: Colors.gentleSage }]}>LEMBRETE</Text>
+            <View style={[styles.reminderRow, { backgroundColor: isDark ? Colors.surfaceDark : Colors.surfaceLight }]}>
+              {REMINDER_OPTIONS.map((opt) => (
+                <Pressable
+                  key={opt.value}
+                  style={[
+                    styles.reminderOption,
+                    reminderLead === opt.value && styles.reminderOptionActive,
+                  ]}
+                  onPress={async () => {
+                    await Haptics.selectionAsync();
+                    setReminderLead(opt.value);
+                  }}
+                >
+                  <Ionicons
+                    name={opt.icon as any}
+                    size={16}
+                    color={reminderLead === opt.value ? Colors.primaryContent : Colors.gentleSage}
+                  />
+                  <Text
+                    style={[
+                      styles.reminderOptionText,
+                      { color: reminderLead === opt.value ? Colors.primaryContent : Colors.gentleSage },
+                    ]}
+                  >
+                    {opt.label}
+                  </Text>
+                </Pressable>
+              ))}
+            </View>
+          </View>
+
           {/* Notes */}
           <View style={inputStyles.wrapper}>
             <Text style={[inputStyles.label, { color: Colors.gentleSage }]}>INSTRUÇÕES / OBSERVAÇÕES</Text>
@@ -583,5 +626,31 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontFamily: "Inter_400Regular",
     lineHeight: 22,
+  },
+  reminderRow: {
+    flexDirection: "row",
+    borderRadius: 24,
+    padding: 4,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.04,
+    shadowRadius: 8,
+    elevation: 2,
+  },
+  reminderOption: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 6,
+    paddingVertical: 12,
+    borderRadius: 20,
+  },
+  reminderOptionActive: {
+    backgroundColor: Colors.primary,
+  },
+  reminderOptionText: {
+    fontSize: 13,
+    fontFamily: "Inter_600SemiBold",
   },
 });
