@@ -8,9 +8,10 @@ import {
   TextInput,
   useColorScheme,
   Platform,
+  Alert,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { useApp } from "@/contexts/AppContext";
@@ -23,10 +24,10 @@ const AVATAR_COLORS = [
   "#7C9A92",
   "#F4A261",
   "#A8DADC",
-  "#6A4C93",
-  "#F4D35E",
-  "#3A86FF",
-  "#FB5607",
+  "#E76F51",
+  "#52B788",
+  "#9B72CF",
+  "#F9C74F",
 ];
 
 function InputField({
@@ -37,11 +38,11 @@ function InputField({
 }: {
   label: string;
   icon: string;
-  isDark: boolean;
   value: string;
   onChangeText: (v: string) => void;
   placeholder: string;
   keyboardType?: any;
+  isDark: boolean;
 }) {
   const C = isDark ? Colors.dark : Colors.light;
   const [focused, setFocused] = useState(false);
@@ -109,21 +110,25 @@ export default function AddProfileScreen() {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
   const insets = useSafeAreaInsets();
-  const { addProfile } = useApp();
+  const { addProfile, updateProfile, removeProfile, profiles } = useApp();
+  const params = useLocalSearchParams<{ editId?: string }>();
+
+  const editingProfile = params.editId ? profiles.find((p) => p.id === params.editId) : null;
+  const isEditing = !!editingProfile;
 
   const C = isDark ? Colors.dark : Colors.light;
   const topPad = insets.top + (Platform.OS === "web" ? 67 : 0);
   const bottomPad = insets.bottom + (Platform.OS === "web" ? 34 : 16);
 
-  const [name, setName] = useState("");
-  const [weight, setWeight] = useState("");
-  const [avatarColor, setAvatarColor] = useState(AVATAR_COLORS[0]);
+  const [name, setName] = useState(editingProfile?.name ?? "");
+  const [weight, setWeight] = useState(editingProfile?.weight ? String(editingProfile.weight) : "");
+  const [birthDate, setBirthDate] = useState("");
+  const [avatarColor, setAvatarColor] = useState(editingProfile?.avatarColor ?? AVATAR_COLORS[0]);
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
 
-  const canSave = name.trim().length > 0 && weight.trim().length > 0 && parseFloat(weight) > 0;
-
-  const initials = name.trim().slice(0, 2).toUpperCase() || "??";
+  const canSave = name.trim().length > 0;
+  const initials = name.trim().slice(0, 2).toUpperCase() || "?";
 
   async function handleSave() {
     if (!canSave || saving) return;
@@ -131,17 +136,46 @@ export default function AddProfileScreen() {
     setSaveError(null);
     try {
       await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      await addProfile({
+      const profileData = {
         name: name.trim(),
-        weight: parseFloat(weight),
+        weight: parseFloat(weight) || 0,
         avatarColor,
-      });
+      };
+      if (isEditing && editingProfile) {
+        await updateProfile(editingProfile.id, profileData);
+      } else {
+        await addProfile(profileData);
+      }
       router.back();
     } catch (err) {
-      setSaveError(err instanceof Error ? err.message : "Falha ao criar perfil");
+      setSaveError(err instanceof Error ? err.message : "Falha ao salvar perfil");
     } finally {
       setSaving(false);
     }
+  }
+
+  async function handleDelete() {
+    if (!editingProfile) return;
+    Alert.alert(
+      "Remover Perfil",
+      `Tem certeza que deseja remover o perfil de ${editingProfile.name}? Todos os medicamentos e registros associados também serão removidos.`,
+      [
+        { text: "Cancelar", style: "cancel" },
+        {
+          text: "Remover",
+          style: "destructive",
+          onPress: async () => {
+            try {
+              await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+              await removeProfile(editingProfile.id);
+              router.back();
+            } catch (err) {
+              setSaveError(err instanceof Error ? err.message : "Falha ao remover perfil");
+            }
+          },
+        },
+      ]
+    );
   }
 
   return (
@@ -150,7 +184,9 @@ export default function AddProfileScreen() {
         <Pressable style={styles.cancelBtn} onPress={() => router.back()}>
           <Text style={[styles.cancelText, { color: C.textMuted }]}>Cancelar</Text>
         </Pressable>
-        <Text style={[styles.headerTitle, { color: C.text }]}>Novo Perfil</Text>
+        <Text style={[styles.headerTitle, { color: C.text }]}>
+          {isEditing ? "Editar Perfil" : "Novo Membro"}
+        </Text>
         <Pressable
           style={[
             styles.saveBtn,
@@ -176,20 +212,17 @@ export default function AddProfileScreen() {
         ) : null}
 
         {/* Avatar Preview */}
-        <View style={styles.avatarSection}>
+        <View style={styles.avatarPreviewSection}>
           <View
             style={[
               styles.avatarPreview,
-              {
-                backgroundColor: avatarColor + "22",
-                borderColor: avatarColor + "60",
-              },
+              { backgroundColor: avatarColor + "22", borderColor: avatarColor + "60" },
             ]}
           >
             <Text style={[styles.avatarInitials, { color: avatarColor }]}>{initials}</Text>
           </View>
           <Text style={[styles.avatarHint, { color: C.textMuted }]}>
-            {name.trim() ? name.trim() : "Nome do membro"}
+            {isEditing ? "Edite as informações abaixo" : "Escolha uma cor e preencha os dados"}
           </Text>
         </View>
 
@@ -200,18 +233,18 @@ export default function AddProfileScreen() {
             {AVATAR_COLORS.map((color) => (
               <Pressable
                 key={color}
-                onPress={async () => {
-                  await Haptics.selectionAsync();
-                  setAvatarColor(color);
-                }}
                 style={[
                   styles.colorSwatch,
                   { backgroundColor: color },
                   avatarColor === color && styles.colorSwatchSelected,
                 ]}
+                onPress={async () => {
+                  await Haptics.selectionAsync();
+                  setAvatarColor(color);
+                }}
               >
                 {avatarColor === color && (
-                  <Ionicons name="checkmark" size={16} color="#fff" />
+                  <Ionicons name="checkmark" size={18} color="#fff" />
                 )}
               </Pressable>
             ))}
@@ -221,20 +254,20 @@ export default function AddProfileScreen() {
         {/* Form */}
         <View style={styles.form}>
           <InputField
-            label="Nome do Membro"
+            label="Nome"
             icon="person"
             value={name}
             onChangeText={setName}
-            placeholder="ex.: Júlia, Vovô, Leo"
+            placeholder="ex.: Mãe, Leo, Papai..."
             isDark={isDark}
           />
 
           <InputField
             label="Peso (kg)"
-            icon="scale-outline"
+            icon="fitness-outline"
             value={weight}
             onChangeText={setWeight}
-            placeholder="ex.: 32"
+            placeholder="ex.: 68.5"
             keyboardType="decimal-pad"
             isDark={isDark}
           />
@@ -245,7 +278,37 @@ export default function AddProfileScreen() {
               O peso é usado para calcular a dose segura de cada medicamento. Você pode atualizá-lo depois.
             </Text>
           </View>
+
+          <InputField
+            label="Data de Nascimento"
+            icon="calendar"
+            value={birthDate}
+            onChangeText={setBirthDate}
+            placeholder="dd/mm/aaaa"
+            keyboardType="numbers-and-punctuation"
+            isDark={isDark}
+          />
         </View>
+
+        {/* Delete Button (edit mode only) */}
+        {isEditing && (
+          <Pressable
+            style={({ pressed }) => [
+              styles.deleteBtn,
+              {
+                backgroundColor: isDark ? Colors.surfaceDark : Colors.surfaceLight,
+                borderColor: Colors.gentleRose + "60",
+                opacity: pressed ? 0.7 : 1,
+              },
+            ]}
+            onPress={handleDelete}
+          >
+            <Ionicons name="trash-outline" size={18} color={Colors.gentleRose} />
+            <Text style={[styles.deleteBtnText, { color: Colors.gentleRose }]}>
+              Remover Perfil
+            </Text>
+          </Pressable>
+        )}
       </ScrollView>
     </View>
   );
@@ -299,30 +362,34 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: "Inter_400Regular",
   },
-  avatarSection: {
+  avatarPreviewSection: {
     alignItems: "center",
     gap: 12,
-    paddingTop: 8,
+    paddingVertical: 8,
   },
   avatarPreview: {
     width: 88,
     height: 88,
-    borderRadius: 28,
-    borderWidth: 2,
+    borderRadius: 44,
+    borderWidth: 3,
     alignItems: "center",
     justifyContent: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 12,
+    elevation: 4,
   },
   avatarInitials: {
     fontSize: 32,
     fontFamily: "Inter_700Bold",
+    letterSpacing: -0.5,
   },
   avatarHint: {
-    fontSize: 15,
-    fontFamily: "Inter_500Medium",
+    fontSize: 14,
+    fontFamily: "Inter_400Regular",
   },
-  colorSection: {
-    gap: 12,
-  },
+  colorSection: { gap: 12 },
   sectionLabel: {
     fontSize: 11,
     fontFamily: "Inter_700Bold",
@@ -341,18 +408,19 @@ const styles = StyleSheet.create({
     borderRadius: 22,
     alignItems: "center",
     justifyContent: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.12,
+    shadowRadius: 4,
+    elevation: 2,
   },
   colorSwatchSelected: {
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.25,
-    shadowRadius: 6,
-    elevation: 4,
-    transform: [{ scale: 1.15 }],
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 6,
+    transform: [{ scale: 1.1 }],
   },
-  form: {
-    gap: 20,
-  },
+  form: { gap: 20 },
   weightNote: {
     flexDirection: "row",
     alignItems: "flex-start",
@@ -366,5 +434,19 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontFamily: "Inter_400Regular",
     lineHeight: 19,
+  },
+  deleteBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+    borderRadius: 20,
+    borderWidth: 1.5,
+    paddingVertical: 16,
+    marginTop: 8,
+  },
+  deleteBtnText: {
+    fontSize: 15,
+    fontFamily: "Inter_600SemiBold",
   },
 });

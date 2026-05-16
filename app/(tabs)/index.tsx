@@ -151,7 +151,15 @@ export default function DashboardScreen() {
         style={styles.profileScrollOuter}
       >
         {profiles.map((profile) => (
-          <Pressable key={profile.id} style={styles.profileItem} onPress={() => handleProfileSelect(profile.id)}>
+          <Pressable
+            key={profile.id}
+            style={styles.profileItem}
+            onPress={() => handleProfileSelect(profile.id)}
+            onLongPress={async () => {
+              await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+              router.push({ pathname: "/add-profile", params: { editId: profile.id } });
+            }}
+          >
             <ProfileAvatar
               name={profile.name}
               color={profile.avatarColor}

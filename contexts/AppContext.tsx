@@ -55,6 +55,7 @@ interface AppContextValue {
   selectProfile: (id: string) => void;
   addProfile: (profile: Omit<Profile, "id">) => Promise<void>;
   updateProfile: (id: string, updates: Partial<Profile>) => Promise<void>;
+  removeProfile: (id: string) => Promise<void>;
   addMedication: (medication: Omit<Medication, "id">) => Promise<void>;
   removeMedication: (id: string) => Promise<void>;
   addDoseLog: (log: Omit<DoseLog, "id">) => Promise<void>;
@@ -294,6 +295,17 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setProfiles((prev) => prev.map((p) => (p.id === id ? mapProfile(raw) : p)));
   }
 
+  async function removeProfile(id: string) {
+    await apiRequest("DELETE", `/api/profiles/${id}`);
+    setProfiles((prev) => prev.filter((p) => p.id !== id));
+    setMedications((prev) => prev.filter((m) => m.profileId !== id));
+    setDoseLogs((prev) => prev.filter((l) => l.profileId !== id));
+    if (selectedProfileId === id) {
+      const remaining = profiles.filter((p) => p.id !== id);
+      setSelectedProfileId(remaining[0]?.id ?? null);
+    }
+  }
+
   async function addMedication(medication: Omit<Medication, "id">) {
     const res = await apiRequest("POST", "/api/medications", medication);
     const raw = await res.json();
@@ -347,6 +359,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       selectProfile,
       addProfile,
       updateProfile,
+      removeProfile,
       addMedication,
       removeMedication,
       addDoseLog,
