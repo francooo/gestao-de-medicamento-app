@@ -7,14 +7,15 @@ import {
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import * as Font from "expo-font";
 import { QueryClientProvider } from "@tanstack/react-query";
-import { Stack } from "expo-router";
+import { Stack, router } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { queryClient } from "@/lib/query-client";
 import { AppProvider } from "@/contexts/AppContext";
-import { useColorScheme } from "react-native";
+import { useColorScheme, Platform } from "react-native";
+import * as Notifications from "expo-notifications";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -64,6 +65,7 @@ function RootLayoutNav() {
 
 export default function RootLayout() {
   const [fontsReady, setFontsReady] = useState(false);
+  const responseListener = useRef<Notifications.EventSubscription | null>(null);
 
   useEffect(() => {
     async function loadFonts() {
@@ -83,6 +85,35 @@ export default function RootLayout() {
       }
     }
     loadFonts();
+  }, []);
+
+  useEffect(() => {
+    if (Platform.OS === "web") return;
+
+    Notifications.getLastNotificationResponseAsync().then((response) => {
+      if (!response) return;
+      const data = response.notification.request.content.data as { medicationId?: string } | undefined;
+      if (data?.medicationId) {
+        router.push({
+          pathname: "/dose-logger",
+          params: { medicationId: data.medicationId },
+        });
+      }
+    });
+
+    responseListener.current = Notifications.addNotificationResponseReceivedListener((response) => {
+      const data = response.notification.request.content.data as { medicationId?: string } | undefined;
+      if (data?.medicationId) {
+        router.push({
+          pathname: "/dose-logger",
+          params: { medicationId: data.medicationId },
+        });
+      }
+    });
+
+    return () => {
+      responseListener.current?.remove();
+    };
   }, []);
 
   if (!fontsReady) return null;

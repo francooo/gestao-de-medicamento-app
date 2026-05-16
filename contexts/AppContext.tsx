@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, useMemo, ReactNode } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { apiRequest, getToken, setToken, clearToken } from "@/lib/query-client";
+import { scheduleNextDoseNotification, cancelDoseNotification, requestNotificationPermissions } from "@/lib/notifications";
 
 export interface Profile {
   id: string;
@@ -232,6 +233,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       setAuthUser(data.user);
       setIsAuthenticated(true);
       await loadData();
+      requestNotificationPermissions();
     } catch (err) {
       const msg = parseApiError(err, "Login failed");
       setAuthError(msg);
@@ -248,6 +250,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       setAuthUser(data.user);
       setIsAuthenticated(true);
       await loadData();
+      requestNotificationPermissions();
     } catch (err) {
       const msg = parseApiError(err, "Registration failed");
       setAuthError(msg);
@@ -296,7 +299,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
   }
 
   async function removeProfile(id: string) {
+    const profileMeds = medications.filter((m) => m.profileId === id);
     await apiRequest("DELETE", `/api/profiles/${id}`);
+    await Promise.all(profileMeds.map((m) => cancelDoseNotification(m.id)));
     setProfiles((prev) => prev.filter((p) => p.id !== id));
     setMedications((prev) => prev.filter((m) => m.profileId !== id));
     setDoseLogs((prev) => prev.filter((l) => l.profileId !== id));
@@ -314,13 +319,29 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   async function removeMedication(id: string) {
     await apiRequest("DELETE", `/api/medications/${id}`);
+    await cancelDoseNotification(id);
     setMedications((prev) => prev.filter((m) => m.id !== id));
   }
 
   async function addDoseLog(log: Omit<DoseLog, "id">) {
     const res = await apiRequest("POST", "/api/logs", log);
     const raw = await res.json();
-    setDoseLogs((prev) => [mapLog(raw), ...prev]);
+    const mapped = mapLog(raw);
+    setDoseLogs((prev) => [mapped, ...prev]);
+
+    if (mapped.medicationId && mapped.type === "dose") {
+      const med = medications.find((m) => m.id === mapped.medicationId);
+      const profile = profiles.find((p) => p.id === mapped.profileId);
+      if (med && profile) {
+        await scheduleNextDoseNotification(
+          med.id,
+          med.name,
+          profile.name,
+          med.intervalHours,
+          mapped.timestamp
+        );
+      }
+    }
   }
 
   function getMedicationsForProfile(profileId: string) {
