@@ -10,34 +10,63 @@ import {
   KeyboardAvoidingView,
   ScrollView,
   Image,
+  ActivityIndicator,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
-import { Ionicons, MaterialIcons } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import * as Haptics from "expo-haptics";
 import { useApp } from "@/contexts/AppContext";
 import Colors from "@/constants/colors";
 
+type Mode = "login" | "register";
+
 export default function WelcomeScreen() {
-  const { setAuthenticated } = useApp();
+  const { login, register } = useApp();
   const colorScheme = useColorScheme();
   const isDark = colorScheme === "dark";
   const insets = useSafeAreaInsets();
+
+  const [mode, setMode] = useState<Mode>("login");
   const [email, setEmail] = useState("");
-  const [isFocused, setIsFocused] = useState(false);
+  const [password, setPassword] = useState("");
+  const [emailFocused, setEmailFocused] = useState(false);
+  const [passwordFocused, setPasswordFocused] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const C = isDark ? Colors.dark : Colors.light;
 
-  async function handleLogin() {
+  async function handleSubmit() {
+    if (!email.trim() || !password.trim()) {
+      setError("Por favor, preencha e-mail e senha.");
+      return;
+    }
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    await setAuthenticated(true);
-    router.replace("/(tabs)");
+    setLoading(true);
+    setError(null);
+    try {
+      if (mode === "login") {
+        await login(email.trim(), password);
+      } else {
+        await register(email.trim(), password);
+      }
+      router.replace("/(tabs)");
+    } catch (err: any) {
+      setError(err.message || (mode === "login" ? "Falha ao entrar" : "Falha ao criar conta"));
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  function toggleMode() {
+    setMode((m) => (m === "login" ? "register" : "login"));
+    setError(null);
   }
 
   return (
     <View style={[styles.container, { backgroundColor: isDark ? Colors.backgroundDark : Colors.backgroundLight }]}>
-      {/* Top illustration area */}
       <View style={[styles.heroArea, { paddingTop: insets.top + (Platform.OS === "web" ? 67 : 0) }]}>
         <LinearGradient
           colors={isDark ? ["#152e27", Colors.backgroundDark] : ["#e8f5f1", Colors.backgroundLight]}
@@ -45,11 +74,8 @@ export default function WelcomeScreen() {
           start={{ x: 0, y: 0 }}
           end={{ x: 0, y: 1 }}
         />
-        {/* Decorative blobs */}
         <View style={[styles.blob1, { backgroundColor: isDark ? "rgba(43,238,186,0.08)" : "rgba(43,238,186,0.12)" }]} />
         <View style={[styles.blob2, { backgroundColor: isDark ? "rgba(184,184,209,0.06)" : "rgba(184,184,209,0.15)" }]} />
-
-        {/* Illustration */}
         <View style={styles.illustrationWrapper}>
           <Image
             source={require("@/assets/images/icon.png")}
@@ -71,7 +97,6 @@ export default function WelcomeScreen() {
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
-          {/* Brand */}
           <View style={styles.brandRow}>
             <View style={[styles.brandIcon, { backgroundColor: isDark ? Colors.surfaceDark : Colors.surfaceLight }]}>
               <Ionicons name="leaf" size={28} color={Colors.primary} />
@@ -81,39 +106,19 @@ export default function WelcomeScreen() {
           <Text style={[styles.subtitle, { color: C.textMuted }]}>Saúde da família, simplificada.</Text>
 
           <View style={styles.actions}>
-            {/* Google button */}
-            <Pressable
-              style={({ pressed }) => [
-                styles.googleButton,
-                {
-                  backgroundColor: isDark ? Colors.surfaceDark : Colors.surfaceLight,
-                  borderColor: isDark ? Colors.borderDark : Colors.border,
-                  opacity: pressed ? 0.85 : 1,
-                  transform: [{ scale: pressed ? 0.98 : 1 }],
-                },
-              ]}
-              onPress={handleLogin}
-            >
-              <View style={styles.googleLogoRow}>
-                <MaterialIcons name="language" size={20} color={Colors.primary} />
+            {error ? (
+              <View style={[styles.errorBox, { backgroundColor: isDark ? "rgba(232,157,157,0.15)" : "rgba(232,157,157,0.2)" }]}>
+                <Ionicons name="alert-circle-outline" size={16} color={Colors.gentleRose} />
+                <Text style={[styles.errorText, { color: Colors.gentleRose }]}>{error}</Text>
               </View>
-              <Text style={[styles.googleButtonText, { color: C.text }]}>Continuar com Google</Text>
-            </Pressable>
+            ) : null}
 
-            {/* Divider */}
-            <View style={styles.divider}>
-              <View style={[styles.dividerLine, { backgroundColor: isDark ? "rgba(255,255,255,0.1)" : "#e2ece9" }]} />
-              <Text style={[styles.dividerText, { color: Colors.gentleSage }]}>Ou entre com e-mail</Text>
-              <View style={[styles.dividerLine, { backgroundColor: isDark ? "rgba(255,255,255,0.1)" : "#e2ece9" }]} />
-            </View>
-
-            {/* Email input */}
             <View
               style={[
                 styles.inputContainer,
                 {
                   backgroundColor: isDark ? Colors.surfaceDark : "#E8F1EE",
-                  borderColor: isFocused ? Colors.primary : "transparent",
+                  borderColor: emailFocused ? Colors.primary : "transparent",
                   borderWidth: 2,
                 },
               ]}
@@ -121,7 +126,7 @@ export default function WelcomeScreen() {
               <Ionicons
                 name="mail-outline"
                 size={20}
-                color={isFocused ? Colors.primary : Colors.gentleSage}
+                color={emailFocused ? Colors.primary : Colors.gentleSage}
                 style={styles.inputIcon}
               />
               <TextInput
@@ -132,31 +137,74 @@ export default function WelcomeScreen() {
                 autoCapitalize="none"
                 value={email}
                 onChangeText={setEmail}
-                onFocus={() => setIsFocused(true)}
-                onBlur={() => setIsFocused(false)}
+                onFocus={() => setEmailFocused(true)}
+                onBlur={() => setEmailFocused(false)}
+                editable={!loading}
               />
             </View>
 
-            {/* Login CTA */}
+            <View
+              style={[
+                styles.inputContainer,
+                {
+                  backgroundColor: isDark ? Colors.surfaceDark : "#E8F1EE",
+                  borderColor: passwordFocused ? Colors.primary : "transparent",
+                  borderWidth: 2,
+                },
+              ]}
+            >
+              <Ionicons
+                name="lock-closed-outline"
+                size={20}
+                color={passwordFocused ? Colors.primary : Colors.gentleSage}
+                style={styles.inputIcon}
+              />
+              <TextInput
+                style={[styles.input, { color: C.text }]}
+                placeholder={mode === "register" ? "Mínimo 6 caracteres" : "Sua senha"}
+                placeholderTextColor={Colors.gentleSage}
+                secureTextEntry
+                autoCapitalize="none"
+                value={password}
+                onChangeText={setPassword}
+                onFocus={() => setPasswordFocused(true)}
+                onBlur={() => setPasswordFocused(false)}
+                editable={!loading}
+                onSubmitEditing={handleSubmit}
+              />
+            </View>
+
             <Pressable
               style={({ pressed }) => [
                 styles.loginButton,
                 {
-                  opacity: pressed ? 0.9 : 1,
+                  opacity: pressed || loading ? 0.85 : 1,
                   transform: [{ scale: pressed ? 0.98 : 1 }],
                 },
               ]}
-              onPress={handleLogin}
+              onPress={handleSubmit}
+              disabled={loading}
             >
-              <Text style={styles.loginButtonText}>Entrar</Text>
-              <Ionicons name="arrow-forward" size={20} color={Colors.primaryContent} />
+              {loading ? (
+                <ActivityIndicator color={Colors.primaryContent} size="small" />
+              ) : (
+                <>
+                  <Text style={styles.loginButtonText}>
+                    {mode === "login" ? "Entrar" : "Criar conta"}
+                  </Text>
+                  <Ionicons name="arrow-forward" size={20} color={Colors.primaryContent} />
+                </>
+              )}
             </Pressable>
 
-            {/* Sign up link */}
             <View style={styles.signupRow}>
-              <Text style={[styles.signupText, { color: C.textMuted }]}>Novo por aqui?</Text>
-              <Pressable onPress={handleLogin}>
-                <Text style={[styles.signupLink, { color: Colors.primaryDark }]}>Criar uma conta</Text>
+              <Text style={[styles.signupText, { color: C.textMuted }]}>
+                {mode === "login" ? "Novo por aqui?" : "Já tem uma conta?"}
+              </Text>
+              <Pressable onPress={toggleMode} disabled={loading}>
+                <Text style={[styles.signupLink, { color: Colors.primaryDark }]}>
+                  {mode === "login" ? "Criar uma conta" : "Entrar"}
+                </Text>
               </Pressable>
             </View>
           </View>
@@ -243,39 +291,18 @@ const styles = StyleSheet.create({
     letterSpacing: 0.2,
   },
   actions: { gap: 16 },
-  googleButton: {
-    height: 56,
-    borderRadius: 28,
+  errorBox: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center",
-    borderWidth: 1,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.06,
-    shadowRadius: 8,
-    elevation: 2,
+    gap: 8,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 16,
   },
-  googleLogoRow: {
-    position: "absolute",
-    left: 20,
-  },
-  googleButtonText: {
-    fontSize: 16,
-    fontFamily: "Inter_600SemiBold",
-    letterSpacing: 0.2,
-  },
-  divider: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 12,
-  },
-  dividerLine: { flex: 1, height: 1 },
-  dividerText: {
-    fontSize: 11,
-    fontFamily: "Inter_600SemiBold",
-    textTransform: "uppercase",
-    letterSpacing: 1,
+  errorText: {
+    flex: 1,
+    fontSize: 14,
+    fontFamily: "Inter_400Regular",
   },
   inputContainer: {
     height: 56,

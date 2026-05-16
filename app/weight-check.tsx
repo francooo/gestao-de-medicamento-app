@@ -40,10 +40,14 @@ export default function WeightCheckScreen() {
   async function handleConfirm() {
     if (!profile) return;
     await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    updateProfile(profile.id, {
-      weight: parseFloat(weight),
-      weightVerifiedAt: Date.now(),
-    });
+    try {
+      await updateProfile(profile.id, {
+        weight: parseFloat(weight),
+        weightVerifiedAt: Date.now(),
+      });
+    } catch (err) {
+      console.error("Failed to update weight:", err);
+    }
     router.back();
   }
 

@@ -120,23 +120,33 @@ export default function AddMedicationScreen() {
   const [notes, setNotes] = useState("");
   const [intervalHours, setIntervalHours] = useState("8");
   const [durationDays, setDurationDays] = useState("5");
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   const canSave = name.trim().length > 0 && strength.trim().length > 0;
 
   async function handleSave() {
-    if (!canSave || !selectedProfile) return;
-    await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    addMedication({
-      profileId: selectedProfile.id,
-      name: name.trim(),
-      type,
-      strength: parseFloat(strength) || 0,
-      unit,
-      notes: notes.trim() || undefined,
-      intervalHours: parseInt(intervalHours) || 8,
-      durationDays: parseInt(durationDays) || 5,
-    });
-    router.back();
+    if (!canSave || !selectedProfile || saving) return;
+    setSaving(true);
+    setSaveError(null);
+    try {
+      await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      await addMedication({
+        profileId: selectedProfile.id,
+        name: name.trim(),
+        type,
+        strength: parseFloat(strength) || 0,
+        unit,
+        notes: notes.trim() || undefined,
+        intervalHours: parseInt(intervalHours) || 8,
+        durationDays: parseInt(durationDays) || 5,
+      });
+      router.back();
+    } catch (err) {
+      setSaveError(err instanceof Error ? err.message : "Falha ao salvar medicamento");
+    } finally {
+      setSaving(false);
+    }
   }
 
   return (
@@ -151,11 +161,11 @@ export default function AddMedicationScreen() {
         </Pressable>
         <Text style={[styles.headerTitle, { color: C.text }]}>Adicionar Medicamento</Text>
         <Pressable
-          style={[styles.saveBtn, { backgroundColor: canSave ? Colors.primary : Colors.primary + "50" }]}
+          style={[styles.saveBtn, { backgroundColor: canSave && !saving ? Colors.primary : Colors.primary + "50" }]}
           onPress={handleSave}
-          disabled={!canSave}
+          disabled={!canSave || saving}
         >
-          <Text style={styles.saveBtnText}>Salvar</Text>
+          <Text style={styles.saveBtnText}>{saving ? "..." : "Salvar"}</Text>
         </Pressable>
       </View>
 
@@ -164,6 +174,13 @@ export default function AddMedicationScreen() {
         contentContainerStyle={[styles.content, { paddingBottom: bottomPad + 40 }]}
         keyboardShouldPersistTaps="handled"
       >
+        {saveError ? (
+          <View style={[styles.errorBanner, { backgroundColor: Colors.gentleRose + "22" }]}>
+            <Ionicons name="alert-circle-outline" size={16} color={Colors.gentleRose} />
+            <Text style={[styles.errorBannerText, { color: Colors.gentleRose }]}>{saveError}</Text>
+          </View>
+        ) : null}
+
         {/* Profile Banner */}
         {selectedProfile && (
           <View style={[styles.profileBanner, { backgroundColor: isDark ? Colors.surfaceDark : Colors.mintSoft, borderColor: Colors.primary + "20" }]}>
@@ -422,6 +439,20 @@ const styles = StyleSheet.create({
   content: {
     paddingHorizontal: 20,
     gap: 20,
+  },
+  errorBanner: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderRadius: 16,
+    marginBottom: 4,
+  },
+  errorBannerText: {
+    flex: 1,
+    fontSize: 14,
+    fontFamily: "Inter_400Regular",
   },
   profileBanner: {
     flexDirection: "row",

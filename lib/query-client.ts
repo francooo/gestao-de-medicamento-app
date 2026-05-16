@@ -1,20 +1,27 @@
 import { fetch } from "expo/fetch";
 import { QueryClient, QueryFunction } from "@tanstack/react-query";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-/**
- * Gets the base URL for the Express API server (e.g., "http://localhost:3000")
- * @returns {string} The API base URL
- */
+const TOKEN_KEY = "gc_auth_token";
+
+export async function getToken(): Promise<string | null> {
+  return AsyncStorage.getItem(TOKEN_KEY);
+}
+
+export async function setToken(token: string): Promise<void> {
+  await AsyncStorage.setItem(TOKEN_KEY, token);
+}
+
+export async function clearToken(): Promise<void> {
+  await AsyncStorage.removeItem(TOKEN_KEY);
+}
+
 export function getApiUrl(): string {
   let host = process.env.EXPO_PUBLIC_DOMAIN;
-
   if (!host) {
     throw new Error("EXPO_PUBLIC_DOMAIN is not set");
   }
-
-  let url = new URL(`https://${host}`);
-
-  return url.href;
+  return new URL(`https://${host}`).href;
 }
 
 async function throwIfResNotOk(res: Response) {
@@ -27,14 +34,19 @@ async function throwIfResNotOk(res: Response) {
 export async function apiRequest(
   method: string,
   route: string,
-  data?: unknown | undefined,
+  data?: unknown,
 ): Promise<Response> {
   const baseUrl = getApiUrl();
   const url = new URL(route, baseUrl);
+  const token = await getToken();
+
+  const headers: Record<string, string> = {};
+  if (data) headers["Content-Type"] = "application/json";
+  if (token) headers["Authorization"] = `Bearer ${token}`;
 
   const res = await fetch(url.toString(), {
     method,
-    headers: data ? { "Content-Type": "application/json" } : {},
+    headers,
     body: data ? JSON.stringify(data) : undefined,
     credentials: "include",
   });
@@ -51,9 +63,14 @@ export const getQueryFn: <T>(options: {
   async ({ queryKey }) => {
     const baseUrl = getApiUrl();
     const url = new URL(queryKey.join("/") as string, baseUrl);
+    const token = await getToken();
+
+    const headers: Record<string, string> = {};
+    if (token) headers["Authorization"] = `Bearer ${token}`;
 
     const res = await fetch(url.toString(), {
       credentials: "include",
+      headers,
     });
 
     if (unauthorizedBehavior === "returnNull" && res.status === 401) {

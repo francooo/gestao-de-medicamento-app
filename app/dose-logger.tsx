@@ -74,16 +74,21 @@ export default function DoseLoggerScreen() {
 
     await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     const ts = Date.now() - TIME_OPTIONS[selectedTimeIdx].offset * 60000;
-    addDoseLog({
-      profileId: selectedProfile.id,
-      medicationId: med.id,
-      medicationName: med.name,
-      dose: doseAmount,
-      unit: selectedUnit,
-      timestamp: ts,
-      type: "dose",
-    });
-    router.back();
+    try {
+      await addDoseLog({
+        profileId: selectedProfile.id,
+        medicationId: med.id,
+        medicationName: med.name,
+        dose: doseAmount,
+        unit: selectedUnit,
+        timestamp: ts,
+        type: "dose",
+      });
+      router.back();
+    } catch (err) {
+      console.error("Failed to save dose log:", err);
+      router.back();
+    }
   }
 
   if (!med) {

@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useMemo, ReactNode } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { apiRequest, getToken, setToken, clearToken } from "@/lib/query-client";
 
 export interface Profile {
   id: string;
@@ -36,6 +37,11 @@ export interface DoseLog {
   note?: string;
 }
 
+interface AuthUser {
+  id: string;
+  email: string;
+}
+
 interface AppContextValue {
   profiles: Profile[];
   selectedProfileId: string | null;
@@ -44,49 +50,116 @@ interface AppContextValue {
   doseLogs: DoseLog[];
   isLoaded: boolean;
   isAuthenticated: boolean;
+  authUser: AuthUser | null;
+  authError: string | null;
   selectProfile: (id: string) => void;
-  addProfile: (profile: Omit<Profile, "id">) => void;
-  updateProfile: (id: string, updates: Partial<Profile>) => void;
-  addMedication: (medication: Omit<Medication, "id">) => void;
-  removeMedication: (id: string) => void;
-  addDoseLog: (log: Omit<DoseLog, "id">) => void;
+  addProfile: (profile: Omit<Profile, "id">) => Promise<void>;
+  updateProfile: (id: string, updates: Partial<Profile>) => Promise<void>;
+  addMedication: (medication: Omit<Medication, "id">) => Promise<void>;
+  removeMedication: (id: string) => Promise<void>;
+  addDoseLog: (log: Omit<DoseLog, "id">) => Promise<void>;
   getMedicationsForProfile: (profileId: string) => Medication[];
   getLogsForProfile: (profileId: string) => DoseLog[];
   getLastDoseLog: (medicationId: string) => DoseLog | null;
+  login: (email: string, password: string) => Promise<void>;
+  register: (email: string, password: string) => Promise<void>;
+  logout: () => Promise<void>;
   setAuthenticated: (value: boolean) => void;
 }
 
 const AppContext = createContext<AppContextValue | null>(null);
 
-const STORAGE_KEYS = {
-  profiles: "gc_profiles",
-  selectedProfileId: "gc_selected_profile",
-  medications: "gc_medications",
-  doseLogs: "gc_dose_logs",
-  isAuthenticated: "gc_authenticated",
-};
+const SELECTED_PROFILE_KEY = "gc_selected_profile";
 
-const AVATAR_COLORS = ["#2beeba", "#E89D9D", "#B8B8D1", "#7C9A92", "#F5A623", "#9B59B6"];
+interface RawProfile {
+  id: string;
+  name: string;
+  weight?: number;
+  weightVerifiedAt?: number | null;
+  weight_verified_at?: number | null;
+  avatarColor?: string;
+  avatar_color?: string;
+}
 
-const DEFAULT_PROFILES: Profile[] = [
-  { id: "1", name: "Leo", weight: 14.2, weightVerifiedAt: Date.now() - 2 * 24 * 3600000, avatarColor: "#2beeba" },
-  { id: "2", name: "Dad", weight: 80, avatarColor: "#7C9A92" },
-  { id: "3", name: "Mom", weight: 62, avatarColor: "#E89D9D" },
-];
+interface RawMedication {
+  id: string;
+  profileId?: string;
+  profile_id?: string;
+  name: string;
+  type?: string;
+  strength?: number;
+  unit?: string;
+  notes?: string | null;
+  intervalHours?: number;
+  interval_hours?: number;
+  durationDays?: number;
+  duration_days?: number;
+}
 
-const DEFAULT_MEDICATIONS: Medication[] = [
-  { id: "m1", profileId: "1", name: "Amoxicillin", type: "liquid", strength: 250, unit: "mg", notes: "Tomar com alimento", intervalHours: 8, durationDays: 5 },
-  { id: "m2", profileId: "1", name: "Ibuprofen", type: "liquid", strength: 200, unit: "mg", notes: "Evitar estômago vazio", intervalHours: 6, durationDays: 3 },
-  { id: "m3", profileId: "2", name: "Vitamina D", type: "tablet", strength: 1000, unit: "units", intervalHours: 24, durationDays: 30 },
-];
+interface RawDoseLog {
+  id: string;
+  profileId?: string;
+  profile_id?: string;
+  medicationId?: string | null;
+  medication_id?: string | null;
+  medicationName?: string;
+  medication_name?: string;
+  dose?: number | null;
+  unit?: string | null;
+  timestamp: number;
+  type?: string;
+  value?: number | null;
+  note?: string | null;
+}
 
-const DEFAULT_LOGS: DoseLog[] = [
-  { id: "l1", profileId: "1", medicationId: "m2", medicationName: "Ibuprofen", dose: 5, unit: "ml", timestamp: Date.now() - 2 * 3600000, type: "dose" },
-  { id: "l2", profileId: "1", medicationName: "Verificação de Peso", timestamp: Date.now() - 2.5 * 3600000, type: "weight", value: 14.2 },
-  { id: "l3", profileId: "1", medicationId: "m1", medicationName: "Amoxicillin", dose: 5, unit: "ml", timestamp: Date.now() - 26 * 3600000, type: "dose" },
-  { id: "l4", profileId: "1", medicationName: "Temperatura", timestamp: Date.now() - 26.5 * 3600000, type: "temperature", value: 38.5 },
-  { id: "l5", profileId: "1", medicationName: "Nota do Médico", timestamp: Date.now() - 38 * 3600000, type: "note", note: "Beba bastante água" },
-];
+function mapProfile(raw: RawProfile): Profile {
+  return {
+    id: raw.id,
+    name: raw.name,
+    weight: raw.weight ?? 0,
+    weightVerifiedAt: raw.weightVerifiedAt ?? raw.weight_verified_at ?? undefined,
+    avatarColor: raw.avatarColor ?? raw.avatar_color ?? "#2beeba",
+  };
+}
+
+function mapMedication(raw: RawMedication): Medication {
+  return {
+    id: raw.id,
+    profileId: raw.profileId ?? raw.profile_id ?? "",
+    name: raw.name,
+    type: (raw.type as Medication["type"]) ?? "other",
+    strength: raw.strength ?? 0,
+    unit: (raw.unit as Medication["unit"]) ?? "mg",
+    notes: raw.notes ?? undefined,
+    intervalHours: raw.intervalHours ?? raw.interval_hours ?? 8,
+    durationDays: raw.durationDays ?? raw.duration_days ?? 7,
+  };
+}
+
+function mapLog(raw: RawDoseLog): DoseLog {
+  return {
+    id: raw.id,
+    profileId: raw.profileId ?? raw.profile_id ?? "",
+    medicationId: raw.medicationId ?? raw.medication_id ?? undefined,
+    medicationName: raw.medicationName ?? raw.medication_name ?? "",
+    dose: raw.dose ?? undefined,
+    unit: raw.unit ?? undefined,
+    timestamp: raw.timestamp,
+    type: (raw.type as LogType) ?? "dose",
+    value: raw.value ?? undefined,
+    note: raw.note ?? undefined,
+  };
+}
+
+function parseApiError(err: unknown, fallback: string): string {
+  if (!(err instanceof Error)) return fallback;
+  const msg = err.message.replace(/^\d+:\s*/, "");
+  try {
+    return (JSON.parse(msg) as { message?: string }).message || msg;
+  } catch {
+    return msg || fallback;
+  }
+}
 
 export function AppProvider({ children }: { children: ReactNode }) {
   const [profiles, setProfiles] = useState<Profile[]>([]);
@@ -94,94 +167,148 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [medications, setMedications] = useState<Medication[]>([]);
   const [doseLogs, setDoseLogs] = useState<DoseLog[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
-  const [isAuthenticated, setIsAuthenticatedState] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [authUser, setAuthUser] = useState<AuthUser | null>(null);
+  const [authError, setAuthError] = useState<string | null>(null);
 
   useEffect(() => {
-    loadData();
+    checkAuth();
   }, []);
+
+  async function checkAuth() {
+    try {
+      const token = await getToken();
+      if (!token) {
+        setIsLoaded(true);
+        return;
+      }
+      const res = await apiRequest("GET", "/api/auth/me");
+      const data = await res.json();
+      setAuthUser(data.user);
+      setIsAuthenticated(true);
+      await loadData();
+    } catch {
+      await clearToken();
+      setIsLoaded(true);
+    }
+  }
 
   async function loadData() {
     try {
-      const [profilesStr, selectedId, medsStr, logsStr, authStr] = await Promise.all([
-        AsyncStorage.getItem(STORAGE_KEYS.profiles),
-        AsyncStorage.getItem(STORAGE_KEYS.selectedProfileId),
-        AsyncStorage.getItem(STORAGE_KEYS.medications),
-        AsyncStorage.getItem(STORAGE_KEYS.doseLogs),
-        AsyncStorage.getItem(STORAGE_KEYS.isAuthenticated),
+      const [profilesRes, medsRes, logsRes] = await Promise.all([
+        apiRequest("GET", "/api/profiles"),
+        apiRequest("GET", "/api/medications"),
+        apiRequest("GET", "/api/logs"),
       ]);
+      const rawProfiles = await profilesRes.json();
+      const rawMeds = await medsRes.json();
+      const rawLogs = await logsRes.json();
 
-      const loadedProfiles = profilesStr ? JSON.parse(profilesStr) : DEFAULT_PROFILES;
-      const loadedMeds = medsStr ? JSON.parse(medsStr) : DEFAULT_MEDICATIONS;
-      const loadedLogs = logsStr ? JSON.parse(logsStr) : DEFAULT_LOGS;
-      const loadedAuth = authStr === "true";
+      const loadedProfiles = rawProfiles.map(mapProfile);
+      const loadedMeds = rawMeds.map(mapMedication);
+      const loadedLogs = rawLogs.map(mapLog);
 
       setProfiles(loadedProfiles);
-      setSelectedProfileId(selectedId || (loadedProfiles[0]?.id ?? null));
       setMedications(loadedMeds);
       setDoseLogs(loadedLogs);
-      setIsAuthenticatedState(loadedAuth);
+
+      const savedId = await AsyncStorage.getItem(SELECTED_PROFILE_KEY);
+      const hasProfile = loadedProfiles.find((p: Profile) => p.id === savedId);
+      setSelectedProfileId(hasProfile ? savedId : (loadedProfiles[0]?.id ?? null));
     } catch (e) {
-      setProfiles(DEFAULT_PROFILES);
-      setSelectedProfileId(DEFAULT_PROFILES[0].id);
-      setMedications(DEFAULT_MEDICATIONS);
-      setDoseLogs(DEFAULT_LOGS);
+      console.error("Failed to load data:", e);
     } finally {
       setIsLoaded(true);
     }
   }
 
-  async function saveProfiles(data: Profile[]) {
-    setProfiles(data);
-    await AsyncStorage.setItem(STORAGE_KEYS.profiles, JSON.stringify(data));
+  async function login(email: string, password: string) {
+    setAuthError(null);
+    try {
+      const res = await apiRequest("POST", "/api/auth/login", { email, password });
+      const data = await res.json() as { token: string; user: AuthUser };
+      await setToken(data.token);
+      setAuthUser(data.user);
+      setIsAuthenticated(true);
+      await loadData();
+    } catch (err) {
+      const msg = parseApiError(err, "Login failed");
+      setAuthError(msg);
+      throw new Error(msg);
+    }
   }
 
-  async function saveMedications(data: Medication[]) {
-    setMedications(data);
-    await AsyncStorage.setItem(STORAGE_KEYS.medications, JSON.stringify(data));
+  async function register(email: string, password: string) {
+    setAuthError(null);
+    try {
+      const res = await apiRequest("POST", "/api/auth/register", { email, password });
+      const data = await res.json() as { token: string; user: AuthUser };
+      await setToken(data.token);
+      setAuthUser(data.user);
+      setIsAuthenticated(true);
+      await loadData();
+    } catch (err) {
+      const msg = parseApiError(err, "Registration failed");
+      setAuthError(msg);
+      throw new Error(msg);
+    }
   }
 
-  async function saveDoseLogs(data: DoseLog[]) {
-    setDoseLogs(data);
-    await AsyncStorage.setItem(STORAGE_KEYS.doseLogs, JSON.stringify(data));
+  async function logout() {
+    await clearToken();
+    setAuthUser(null);
+    setIsAuthenticated(false);
+    setProfiles([]);
+    setMedications([]);
+    setDoseLogs([]);
+    setSelectedProfileId(null);
+    setAuthError(null);
+    await AsyncStorage.removeItem(SELECTED_PROFILE_KEY);
+  }
+
+  function setAuthenticated(value: boolean) {
+    setIsAuthenticated(value);
   }
 
   function selectProfile(id: string) {
     setSelectedProfileId(id);
-    AsyncStorage.setItem(STORAGE_KEYS.selectedProfileId, id);
+    AsyncStorage.setItem(SELECTED_PROFILE_KEY, id);
   }
 
-  function addProfile(profile: Omit<Profile, "id">) {
-    const newProfile: Profile = {
-      ...profile,
-      id: Date.now().toString() + Math.random().toString(36).substr(2, 6),
-      avatarColor: AVATAR_COLORS[profiles.length % AVATAR_COLORS.length],
-    };
-    saveProfiles([...profiles, newProfile]);
+  async function addProfile(profile: Omit<Profile, "id">) {
+    const res = await apiRequest("POST", "/api/profiles", profile);
+    const raw = await res.json();
+    const newProfile = mapProfile(raw);
+    setProfiles((prev) => [...prev, newProfile]);
+    if (!selectedProfileId) {
+      setSelectedProfileId(newProfile.id);
+    }
   }
 
-  function updateProfile(id: string, updates: Partial<Profile>) {
-    const updated = profiles.map((p) => (p.id === id ? { ...p, ...updates } : p));
-    saveProfiles(updated);
+  async function updateProfile(id: string, updates: Partial<Profile>) {
+    const current = profiles.find((p) => p.id === id);
+    if (!current) return;
+    const merged = { ...current, ...updates };
+    const res = await apiRequest("PUT", `/api/profiles/${id}`, merged);
+    const raw = await res.json();
+    setProfiles((prev) => prev.map((p) => (p.id === id ? mapProfile(raw) : p)));
   }
 
-  function addMedication(medication: Omit<Medication, "id">) {
-    const newMed: Medication = {
-      ...medication,
-      id: Date.now().toString() + Math.random().toString(36).substr(2, 6),
-    };
-    saveMedications([...medications, newMed]);
+  async function addMedication(medication: Omit<Medication, "id">) {
+    const res = await apiRequest("POST", "/api/medications", medication);
+    const raw = await res.json();
+    setMedications((prev) => [...prev, mapMedication(raw)]);
   }
 
-  function removeMedication(id: string) {
-    saveMedications(medications.filter((m) => m.id !== id));
+  async function removeMedication(id: string) {
+    await apiRequest("DELETE", `/api/medications/${id}`);
+    setMedications((prev) => prev.filter((m) => m.id !== id));
   }
 
-  function addDoseLog(log: Omit<DoseLog, "id">) {
-    const newLog: DoseLog = {
-      ...log,
-      id: Date.now().toString() + Math.random().toString(36).substr(2, 6),
-    };
-    saveDoseLogs([newLog, ...doseLogs]);
+  async function addDoseLog(log: Omit<DoseLog, "id">) {
+    const res = await apiRequest("POST", "/api/logs", log);
+    const raw = await res.json();
+    setDoseLogs((prev) => [mapLog(raw), ...prev]);
   }
 
   function getMedicationsForProfile(profileId: string) {
@@ -201,11 +328,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
     return logs[0] ?? null;
   }
 
-  async function setAuthenticated(value: boolean) {
-    setIsAuthenticatedState(value);
-    await AsyncStorage.setItem(STORAGE_KEYS.isAuthenticated, value ? "true" : "false");
-  }
-
   const selectedProfile = useMemo(
     () => profiles.find((p) => p.id === selectedProfileId) ?? null,
     [profiles, selectedProfileId]
@@ -220,6 +342,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
       doseLogs,
       isLoaded,
       isAuthenticated,
+      authUser,
+      authError,
       selectProfile,
       addProfile,
       updateProfile,
@@ -229,9 +353,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
       getMedicationsForProfile,
       getLogsForProfile,
       getLastDoseLog,
+      login,
+      register,
+      logout,
       setAuthenticated,
     }),
-    [profiles, selectedProfileId, selectedProfile, medications, doseLogs, isLoaded, isAuthenticated]
+    [profiles, selectedProfileId, selectedProfile, medications, doseLogs, isLoaded, isAuthenticated, authUser, authError]
   );
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
