@@ -59,6 +59,10 @@ function RootLayoutNav() {
         name="add-profile"
         options={{ presentation: "modal", headerShown: false }}
       />
+      <Stack.Screen
+        name="scheduled-reminders"
+        options={{ presentation: "modal", headerShown: false }}
+      />
     </Stack>
   );
 }

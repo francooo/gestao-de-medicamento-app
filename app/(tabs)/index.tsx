@@ -137,7 +137,13 @@ export default function DashboardScreen() {
           <Text style={[styles.greeting, { color: C.text }]}>{greeting}, Sara</Text>
           <Text style={[styles.dateText, { color: Colors.gentleLavender }]}>{today.toUpperCase()}</Text>
         </View>
-        <Pressable style={styles.notifButton} onPress={() => {}}>
+        <Pressable
+          style={styles.notifButton}
+          onPress={async () => {
+            await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            router.push("/scheduled-reminders");
+          }}
+        >
           <Ionicons name="notifications" size={26} color={isDark ? Colors.primary + "99" : Colors.gentleSage} />
           <View style={styles.notifDot} />
         </Pressable>
