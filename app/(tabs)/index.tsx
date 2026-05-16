@@ -174,6 +174,7 @@ export default function DashboardScreen() {
           style={styles.profileItem}
           onPress={async () => {
             await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            router.push("/add-profile");
           }}
         >
           <View style={[styles.addProfileBtn, { borderColor: Colors.gentleLavender, backgroundColor: isDark ? Colors.surfaceDark : Colors.lavenderLight }]}>

@@ -54,6 +54,10 @@ function RootLayoutNav() {
         name="add-medication"
         options={{ presentation: "modal", headerShown: false }}
       />
+      <Stack.Screen
+        name="add-profile"
+        options={{ presentation: "modal", headerShown: false }}
+      />
     </Stack>
   );
 }
